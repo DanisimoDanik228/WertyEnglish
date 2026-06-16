@@ -1,8 +1,8 @@
 services:
   wertyenglish:
-    image: wertyenglish
+    image: ghcr.io/danisimodanik228/werty_english 
     build:
-      context: .
-      dockerfile: WertyEnglish/Dockerfile
+        context: .
+        dockerfile: WertyEnglish/Dockerfile
     ports:
       - "5051:8080"
