@@ -1,0 +1,8 @@
+services:
+  wertyenglish:
+    image: wertyenglish
+    build:
+      context: .
+      dockerfile: WertyEnglish/Dockerfile
+    ports:
+      - "5051:8080"
