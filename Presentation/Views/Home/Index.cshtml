@@ -2,15 +2,44 @@
 	ViewData["Title"] = "MainPage";
 }
 
-<div>
-    <div id="listWords">
-    </div>
-    
-    <input id="word" placeholder="Enter Word" />
-    <input id="translate" placeholder="Enter Translation" />
+<div class="bg-black vw-100 vh-100 text-light">
+    <div class="row">
+        <div class="col-2">
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addWordModal">
+                Add New Word
+            </button>
+        </div>
 
-    <button type="submit" onclick="addWord()">Add Word</button>
+        <div class="col-3">
+            <div id="listWords"></div>
+        </div>
+    </div>
+
+    <div class="modal modal-sm fade" id="addWordModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+
+                <div class="modal-header">
+                    <h5>Add New Word</h5>
+                </div>
+
+                <div class="modal-body d-flex flex-column">
+                    <input id="word" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
+                    <input id="translate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="addWord()">Add Word</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
 <script>
     let allWords = []; 
     loadWords();
@@ -20,6 +49,10 @@
         const word = document.getElementById('word').value;
         const translate = document.getElementById('translate').value;
 
+        if(word?.length == 0 || translate?.length == 0){
+            return;
+        }
+
         const newWord = await CreatePairWord(word, translate);
         allWords.push(newWord);
         renderAllWords(allWords);
@@ -28,11 +61,18 @@
     function renderAllWords(words)
     {
         const listWords = document.getElementById('listWords');
-        listWords.innerHTML = "";
+        listWords.innerHTML = "";    
 
         for(let word of words){
             const div = document.createElement('div');
-            div.textContent = `${word.word} - ${word.translate}`;
+            
+            div.className = "border rounded-2 m-1";
+
+            div.innerHTML = `
+                <div class="bg-dark rounded-2 m-1">${word.word}</div>
+                <div class="bg-dark rounded-2 m-1">${word.translate}</div>
+            `;
+
             listWords.appendChild(div);
         }
     }
