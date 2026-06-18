@@ -1,6 +1,14 @@
 <Solution>
-  <Project Path="docker-compose.dcproj">
-    <Build />
-  </Project>
-  <Project Path="WertyEnglish/WertyEnglish.csproj" />
+  <Folder Name="/Application/">
+    <Project Path="Application.Repositories/Application.Repositories.csproj" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="Domain.Models/Domain.Models.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure.Repositories/Infrastructure.Repositories.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Presentation/Presentation.csproj" />
+  </Folder>
 </Solution>

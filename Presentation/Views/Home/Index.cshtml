@@ -1,0 +1,45 @@
+﻿@{
+	ViewData["Title"] = "MainPage";
+}
+
+<div>
+    <div id="listWords">
+    </div>
+    
+    <input id="word" placeholder="Enter Word" />
+    <input id="translate" placeholder="Enter Translation" />
+
+    <button type="submit" onclick="addWord()">Add Word</button>
+</div>
+<script>
+    let allWords = []; 
+    loadWords();
+
+    async function addWord()
+    {
+        const word = document.getElementById('word').value;
+        const translate = document.getElementById('translate').value;
+
+        const newWord = await CreatePairWord(word, translate);
+        allWords.push(newWord);
+        renderAllWords(allWords);
+    }
+
+    function renderAllWords(words)
+    {
+        const listWords = document.getElementById('listWords');
+        listWords.innerHTML = "";
+
+        for(let word of words){
+            const div = document.createElement('div');
+            div.textContent = `${word.word} - ${word.translate}`;
+            listWords.appendChild(div);
+        }
+    }
+
+    async function loadWords()
+    {
+        allWords = await GetAllWords();
+        renderAllWords(allWords);
+    }
+</script>
