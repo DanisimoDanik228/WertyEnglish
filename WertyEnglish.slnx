@@ -11,4 +11,8 @@
   <Folder Name="/Presentation/">
     <Project Path="Presentation/Presentation.csproj" />
   </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose-local.yml" />
+    <File Path="docker-compose.yml" />
+  </Folder>
 </Solution>

@@ -3,6 +3,6 @@ services:
     image: ghcr.io/danisimodanik228/werty_english 
     build:
         context: .
-        dockerfile: WertyEnglish/Dockerfile
+        dockerfile: Presentation/Dockerfile
     ports:
       - "5051:8080"
