@@ -1,3 +1,8 @@
+using Application.Services;
+using Infrastructure.Repositories;
+using Interface.Services;
+using Repositories;
+
 namespace WertyEnglish
 {
     public class Program
@@ -7,6 +12,10 @@ namespace WertyEnglish
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddSingleton<IPairWordRepository, InMemoryPairWordRepository>();
+
+            builder.Services.AddSingleton<IPairWordService, PairWordService>();
 
             var app = builder.Build();
 

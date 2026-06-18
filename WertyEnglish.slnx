@@ -1,12 +1,14 @@
 <Solution>
   <Folder Name="/Application/">
     <Project Path="Application.Repositories/Application.Repositories.csproj" />
+    <Project Path="Application.Services/Application.Services.csproj" Id="97c35153-0365-4e0d-a223-51a69bc94a2f" />
   </Folder>
   <Folder Name="/Domain/">
     <Project Path="Domain.Models/Domain.Models.csproj" />
   </Folder>
   <Folder Name="/Infrastructure/">
     <Project Path="Infrastructure.Repositories/Infrastructure.Repositories.csproj" />
+    <Project Path="Interface.Services/Infrastructure.Services.csproj" Id="70749788-d1ac-479c-a285-3614525b6b12" />
   </Folder>
   <Folder Name="/Presentation/">
     <Project Path="Presentation/Presentation.csproj" />

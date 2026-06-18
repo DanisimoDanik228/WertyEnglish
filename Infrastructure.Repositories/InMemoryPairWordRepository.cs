@@ -5,8 +5,8 @@ namespace Infrastructure.Repositories
 {
     public class InMemoryPairWordRepository : IPairWordRepository
     {
-        private readonly List<PairWord> _storage = new List<PairWord>();
-        private int _nextId = 1;
+        private static readonly List<PairWord> _storage = new List<PairWord>();
+        private static int _nextId = 1;
 
         public async Task<IEnumerable<PairWord>> GetAllAsync()
         {

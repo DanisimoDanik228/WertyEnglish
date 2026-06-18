@@ -1,3 +1,4 @@
+using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using System.Diagnostics;
@@ -8,17 +9,23 @@ namespace WertyEnglish.Controllers
     [Route("api/[controller]/[action]")]
     public class WordController : ControllerBase
     {
+        private readonly IPairWordService _pairWordService;
+        public WordController(IPairWordService pairWordService)
+        {
+            _pairWordService = pairWordService;
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllWords()
         {
-            var t1 = new PairWord();
-            return Ok(new PairWord[] { t1, t1 });
+            var allWords = await _pairWordService.GetAllWordsAsync();
+            return Ok(allWords);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreatePairWord(string Word, string Translate)
         {
-            var word = new PairWord() { Id=12,Word = Word,Translate=Translate};
+            var word = await _pairWordService.AddAsync(Word, Translate);
             return Ok(word);
         }
     }
