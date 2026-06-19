@@ -1,0 +1,4 @@
+﻿.hover-shadow:hover {
+    background-color: #535353;
+    transform: translateX(10px);
+}
