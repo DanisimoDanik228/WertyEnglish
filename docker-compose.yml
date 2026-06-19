@@ -6,3 +6,10 @@ services:
         dockerfile: Presentation/Dockerfile
     ports:
       - "5051:8080"
+  libretranslate:
+    image: libretranslate/libretranslate
+    container_name: libretranslate
+    ports:
+      - ":5000"
+    environment:
+      - LT_LOAD_ONLY=en,ru

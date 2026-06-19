@@ -20,6 +20,8 @@ namespace WertyEnglish
             builder.Services.AddSingleton<IPairWordService, PairWordService>();
             builder.Services.AddSingleton<ITranslateService, TranslateService>();
 
+            builder.Services.AddHttpClient<ITranslateService, TranslateService>();
+
             builder.Services.Configure<TranslateSetting>(
                 builder.Configuration.GetSection("TranslateSetting"));
 
