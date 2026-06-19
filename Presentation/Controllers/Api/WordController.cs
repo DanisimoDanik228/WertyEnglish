@@ -10,9 +10,14 @@ namespace WertyEnglish.Controllers
     public class WordController : ControllerBase
     {
         private readonly IPairWordService _pairWordService;
-        public WordController(IPairWordService pairWordService)
+        private readonly ITranslateService _translateService;
+        public WordController(
+            IPairWordService pairWordService,
+            ITranslateService translateService)
         {
             _pairWordService = pairWordService;
+            _translateService = translateService;
+            
         }
 
         [HttpGet]
@@ -20,6 +25,13 @@ namespace WertyEnglish.Controllers
         {
             var allWords = await _pairWordService.GetAllWordsAsync();
             return Ok(allWords);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TranslateWord(string Word)
+        {
+            var translate = await _translateService.TranslateWord(Word);
+            return Ok(translate);
         }
 
         [HttpPost]
