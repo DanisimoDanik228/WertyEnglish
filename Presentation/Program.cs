@@ -1,5 +1,7 @@
+using Application.Options;
 using Application.Services;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Interface.Services;
 using Repositories;
 
@@ -16,6 +18,10 @@ namespace WertyEnglish
             builder.Services.AddSingleton<IPairWordRepository, InMemoryPairWordRepository>();
 
             builder.Services.AddSingleton<IPairWordService, PairWordService>();
+            builder.Services.AddSingleton<ITranslateService, TranslateService>();
+
+            builder.Services.Configure<TranslateSetting>(
+                builder.Configuration.GetSection("TranslateSetting"));
 
             var app = builder.Build();
 

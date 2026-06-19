@@ -30,6 +30,7 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord()">Translate</button>
                     <button class="btn btn-outline-secondary" onclick="addWord()">Add Word</button>
                 </div>
 
@@ -56,6 +57,17 @@
         const newWord = await CreatePairWord(word, translate);
         allWords.push(newWord);
         renderAllWords(allWords);
+    }
+
+    async function translateWord()
+    {
+        const word = document.getElementById('word').value;
+        if(word?.length == 0){
+            return;
+        }
+
+        const translate = await TranslateWord(word);
+        document.getElementById('translate').value = translate;
     }
 
     function renderAllWords(words)
