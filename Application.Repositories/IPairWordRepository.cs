@@ -12,7 +12,7 @@ namespace Repositories
 
         Task<PairWord> AddAsync(PairWord pairWord);
 
-        Task UpdateAsync(PairWord pairWord);
+        Task<PairWord> UpdateAsync(PairWord pairWord);
 
         Task DeleteAsync(int id);
 

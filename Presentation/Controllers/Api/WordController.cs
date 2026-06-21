@@ -40,5 +40,12 @@ namespace WertyEnglish.Controllers
             var word = await _pairWordService.AddAsync(Word, Translate);
             return Ok(word);
         }
+
+        [HttpPatch]
+        public async Task<IActionResult> UpdatePairWord([FromBody] PairWord word)
+        {
+            var updateWord = await _pairWordService.UpdateAsync(word);
+            return Ok(updateWord);
+        }
     }
 }

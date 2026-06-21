@@ -22,5 +22,10 @@ namespace Interface.Services
         {
             return await _pairWordRepository.GetAllAsync();
         }
+
+        public async Task<PairWord> UpdateAsync(PairWord word)
+        {
+            return await _pairWordRepository.UpdateAsync(word);
+        }
     }
 }
