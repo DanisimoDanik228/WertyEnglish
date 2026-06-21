@@ -30,25 +30,60 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-outline-secondary" onclick="translateWord()">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('word', 'translate')">Translate</button>
                     <button class="btn btn-outline-secondary" onclick="addWord()">Add Word</button>
                 </div>
 
             </div>
         </div>
     </div>
+    
+    <div class="modal modal-sm fade" id="showInfoModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+                
+                <div class="modal-header">
+                    <h5>Update New Word</h5>
+                </div>
+
+                <div class="modal-body d-flex flex-column">
+                    <input id="updateWord" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
+                    <input id="updateTranslate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('idTranslate', 'updateTranslate')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="updateWord()">Update Word</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 
 
 <script>
     let allWords = []; 
+    let selectedWordId;
     loadWords();
 
-    function chooseWord(event)
-    {
-        if (event.target.tagName === 'DIV') {
-            console.log(event.target);
+    function chooseWord(event) {
+        const targetDiv = event.target.closest('.hover-shadow');
+
+        if (targetDiv) {
+            selectedWordId = targetDiv.getAttribute('data-word-id');
+            const wordText = targetDiv.querySelector('.bg-dark:first-child').innerText;
+            const translationText = targetDiv.querySelector('.bg-dark:last-child').innerText;
+
+            document.getElementById('updateWord').value = wordText;
+            document.getElementById('updateTranslate').value = translationText;
+
+            const modalElement = document.getElementById('showInfoModal');
+            const myModal = new bootstrap.Modal(modalElement);
+            myModal.show();
         }
     }
 
@@ -66,7 +101,35 @@
         renderAllWords(allWords);
     }
 
-    async function translateWord()
+    async function updateWord()
+    {
+        if(!selectedWordId)
+        {
+            return;
+        }
+
+        const word = document.getElementById('updateWord').value;
+        const translate = document.getElementById('updateTranslate').value;
+
+        if(word?.length == 0 || translate?.length == 0){
+            return;
+        }
+
+        const fullWord = 
+        {
+            id:selectedWordId,
+            word:word,
+            translate:translate
+        };
+        const newWord = await UpdatePairWord(fullWord);
+        const index = allWords.findIndex(w => w.id == newWord.id);
+        if (index !== -1) {
+            allWords[index] = newWord;
+        }
+        renderAllWords(allWords);
+    }
+
+    async function translateWord(idWord, idTranslate)
     {
         const word = document.getElementById('word').value;
         if(word?.length == 0){
@@ -74,7 +137,7 @@
         }
 
         const translate = await TranslateWord(word);
-        document.getElementById('translate').value = translate;
+        document.getElementById('idTranslate').value = translate;
     }
 
     function renderAllWords(words)
@@ -86,6 +149,7 @@
             const div = document.createElement('div');
             
             div.className = "border rounded-2 m-1 hover-shadow";
+            div.dataset.wordId = word.id;
 
             div.innerHTML = `
                 <div class="bg-dark rounded-2 m-1">${word.word}</div>

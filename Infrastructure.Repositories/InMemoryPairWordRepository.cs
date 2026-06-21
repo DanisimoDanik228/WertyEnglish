@@ -26,13 +26,16 @@ namespace Infrastructure.Repositories
             return pairWord;
         }
 
-        public async Task UpdateAsync(PairWord pairWord)
+        public async Task<PairWord> UpdateAsync(PairWord pairWord)
         {
             var index = _storage.FindIndex(p => p.Id == pairWord.Id);
             if (index != -1)
             {
                 _storage[index] = pairWord;
+                return pairWord;
             }
+
+            return null;
         }
 
         public async Task DeleteAsync(int id)

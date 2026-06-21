@@ -20,3 +20,16 @@ async function CreatePairWord(word, translate) {
 
     return await response.json();
 }
+
+async function UpdatePairWord(word) {
+    let response = await fetch(`/api/Word/UpdatePairWord`,
+        {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(word)
+        });
+
+    return await response.json();
+}
