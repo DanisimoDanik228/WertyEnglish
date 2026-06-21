@@ -53,7 +53,7 @@
 
                 <div class="modal-footer">
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-outline-secondary" onclick="translateWord('idTranslate', 'updateTranslate')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('updateWord', 'updateTranslate')">Translate</button>
                     <button class="btn btn-outline-secondary" onclick="updateWord()">Update Word</button>
                 </div>
 
@@ -129,15 +129,15 @@
         renderAllWords(allWords);
     }
 
-    async function translateWord(idWord, idTranslate)
+    async function translateWord(processWord, processTranslate)
     {
-        const word = document.getElementById('word').value;
+        const word = document.getElementById(processWord).value;
         if(word?.length == 0){
             return;
         }
 
         const translate = await TranslateWord(word);
-        document.getElementById('idTranslate').value = translate;
+        document.getElementById(processTranslate).value = translate;
     }
 
     function renderAllWords(words)
