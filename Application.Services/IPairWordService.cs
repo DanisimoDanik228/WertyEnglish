@@ -8,5 +8,6 @@ namespace Application.Services
 
         Task<PairWord> AddAsync(string word, string translate);
         Task<PairWord> UpdateAsync(PairWord word);
+        Task<bool> DeleteAsync(long Id);
     }
 }

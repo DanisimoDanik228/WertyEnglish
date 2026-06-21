@@ -33,3 +33,12 @@ async function UpdatePairWord(word) {
 
     return await response.json();
 }
+
+async function DeletePairWord(id) {
+    let response = await fetch(`/api/Word/DeletePairWord?Id=${id}`,
+        {
+            method: "DELETE"
+        });
+
+    return await response.json();
+}

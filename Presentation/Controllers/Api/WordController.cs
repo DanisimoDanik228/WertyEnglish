@@ -47,5 +47,12 @@ namespace WertyEnglish.Controllers
             var updateWord = await _pairWordService.UpdateAsync(word);
             return Ok(updateWord);
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePairWord(long Id)
+        {
+            var res = await _pairWordService.DeleteAsync(Id);
+            return Ok(res);
+        }
     }
 }

@@ -8,14 +8,14 @@ namespace Repositories
     {
         Task<IEnumerable<PairWord>> GetAllAsync();
 
-        Task<PairWord?> GetByIdAsync(int id);
+        Task<PairWord?> GetByIdAsync(long id);
 
         Task<PairWord> AddAsync(PairWord pairWord);
 
         Task<PairWord> UpdateAsync(PairWord pairWord);
 
-        Task DeleteAsync(int id);
+        Task<bool> DeleteAsync(long id);
 
-        Task<bool> ExistsAsync(int id);
+        Task<bool> ExistsAsync(long id);
     }
 }

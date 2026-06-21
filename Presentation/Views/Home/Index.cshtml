@@ -55,12 +55,12 @@
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <button class="btn btn-outline-secondary" onclick="translateWord('updateWord', 'updateTranslate')">Translate</button>
                     <button class="btn btn-outline-secondary" onclick="updateWord()">Update Word</button>
+                    <button class="btn btn-outline-secondary" onclick="deleteWord()">Delete Word</button>
                 </div>
 
             </div>
         </div>
     </div>
-</div>
 </div>
 
 
@@ -125,8 +125,29 @@
         const index = allWords.findIndex(w => w.id == newWord.id);
         if (index !== -1) {
             allWords[index] = newWord;
+            renderAllWords(allWords);
         }
-        renderAllWords(allWords);
+    }
+
+    async function deleteWord()
+    {
+        if(!selectedWordId)
+        {
+            return;
+        }
+
+        const result = await DeletePairWord(selectedWordId);
+
+        if(result)
+        {
+            const index = allWords.findIndex(w => w.id == selectedWordId);
+            if (index !== -1) {
+                allWords.splice(index, 1);
+                renderAllWords(allWords);
+
+                closeModal('showInfoModal');
+            }
+        }
     }
 
     async function translateWord(processWord, processTranslate)
@@ -138,6 +159,15 @@
 
         const translate = await TranslateWord(word);
         document.getElementById(processTranslate).value = translate;
+    }
+
+    function closeModal(idModal)
+    {
+        const modalElement = document.getElementById(idModal);
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
     }
 
     function renderAllWords(words)

@@ -23,6 +23,11 @@ namespace Interface.Services
             return await _pairWordRepository.GetAllAsync();
         }
 
+        public async Task<bool> DeleteAsync(long Id)
+        {
+            return await _pairWordRepository.DeleteAsync(Id);
+        }
+
         public async Task<PairWord> UpdateAsync(PairWord word)
         {
             return await _pairWordRepository.UpdateAsync(word);

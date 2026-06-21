@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories
             return _storage.AsEnumerable();
         }
 
-        public async Task<PairWord?> GetByIdAsync(int id)
+        public async Task<PairWord?> GetByIdAsync(long id)
         {
             return _storage.FirstOrDefault(p => p.Id == id);
         }
@@ -38,16 +38,19 @@ namespace Infrastructure.Repositories
             return null;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(long id)
         {
             var item = _storage.FirstOrDefault(p => p.Id == id);
             if (item != null)
             {
                 _storage.Remove(item);
+                return true;
             }
+
+            return false;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        public async Task<bool> ExistsAsync(long id)
         {
             return _storage.Any(p => p.Id == id);
         }
