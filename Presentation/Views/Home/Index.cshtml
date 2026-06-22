@@ -99,6 +99,8 @@
         const newWord = await CreatePairWord(word, translate);
         allWords.push(newWord);
         renderAllWords(allWords);
+
+        closeModal('addWordModal');
     }
 
     async function updateWord()
@@ -126,6 +128,8 @@
         if (index !== -1) {
             allWords[index] = newWord;
             renderAllWords(allWords);
+
+            closeModal('showInfoModal');
         }
     }
 
