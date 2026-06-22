@@ -3,6 +3,7 @@ using Application.Services;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Interface.Services;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 
 namespace WertyEnglish
@@ -13,9 +14,14 @@ namespace WertyEnglish
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddDbContext<AppDbContext>(o =>
+            {
+                o.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
+            });
+
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSingleton<IPairWordRepository, InMemoryPairWordRepository>();
+            builder.Services.AddSingleton<IPairWordRepository, PairWordRepository>();
 
             builder.Services.AddSingleton<IPairWordService, PairWordService>();
             builder.Services.AddSingleton<ITranslateService, TranslateService>();
@@ -26,6 +32,13 @@ namespace WertyEnglish
                 builder.Configuration.GetSection("TranslateSetting"));
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+            }
 
             app.MapStaticAssets();
             app.UseStaticFiles();
