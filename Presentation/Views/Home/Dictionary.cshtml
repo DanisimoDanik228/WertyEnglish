@@ -3,8 +3,8 @@
 <div class="bg-black vw-100 min-vh-100 text-light px-3">
     <div class="row">
         <div class="col-sm-3">
-            <button type="button" class="btn btn-outline-secondary" onclick="addDitionary()">
-                Add Dictionary
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addWordModal">
+                Add Word
             </button>
         </div>
 
@@ -74,11 +74,10 @@
 
         if (targetDiv) {
             selectedWordId = targetDiv.getAttribute('data-word-id');
-            const wordText = targetDiv.querySelector('.bg-dark:first-child').innerText;
-            const translationText = targetDiv.querySelector('.bg-dark:last-child').innerText;
+            const word = allWords.find(d => d.id == selectedWordId);
 
-            document.getElementById('updateWord').value = wordText;
-            document.getElementById('updateTranslate').value = translationText;
+            document.getElementById('updateWord').value = word.word;
+            document.getElementById('updateTranslate').value = word.translate;
 
             const modalElement = document.getElementById('showInfoModal');
             const myModal = new bootstrap.Modal(modalElement);
@@ -95,16 +94,11 @@
             return;
         }
 
-        const newWord = await CreatePairWord(word, translate);
+        const newWord = await CreatePairWord(dictionaryId, word, translate);
         allWords.push(newWord);
         renderAllWords(allWords);
 
         closeModal('addWordModal');
-    }
-
-    async function addDitionary()
-    {
-        const newWord = await CreatePairWord(word, translate);
     }
 
     async function updateWord()
@@ -125,7 +119,8 @@
         {
             id:selectedWordId,
             word:word,
-            translate:translate
+            translate:translate,
+            dictionaryId:dictionaryId
         };
         const newWord = await UpdatePairWord(fullWord);
         const index = allWords.findIndex(w => w.id == newWord.id);
@@ -200,7 +195,7 @@
 
     async function loadWords()
     {
-        allWords = await GetAllWords();
+        allWords = await GetAllWords(dictionaryId);
         renderAllWords(allWords);
     }
 </script>

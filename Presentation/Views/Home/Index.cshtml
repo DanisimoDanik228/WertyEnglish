@@ -11,7 +11,7 @@
         </div>
 
         <div class="col-md-6">
-            <div id="container" onclick="chooseDictionary(event)"></div>
+            <div id="container"></div>
         </div>
     </div>
 
@@ -48,21 +48,6 @@
         const modalElement = document.getElementById('addDictionaryModal');
         const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
         myModal.show();
-    }
-
-    function chooseDictionary(event) {
-        const targetDiv = event.target.closest('.hover-shadow');
-
-        if (targetDiv) {
-            selectedDictionaryId = targetDiv.getAttribute('data-dictionary-id');
-            const nameText = targetDiv.querySelector('.dictionary-name-label').innerText;
-
-            document.getElementById('updateDictionaryName').value = nameText;
-
-            const modalElement = document.getElementById('showInfoDictionaryModal');
-            const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-            myModal.show();
-        }
     }
 
     async function addDictionary() {
@@ -131,19 +116,22 @@
     }
 
     function renderAllDictionaries(dictionaries) {
-        const container = document.getElementById('dictionaryContainer');
+        const container = document.getElementById('container');
         container.innerHTML = "";
 
-        for (let dictionary of dictionaries) {
-            const div = document.createElement('div');
-            div.className = "border rounded-2 m-1 hover-shadow p-2";
-            div.dataset.dictionaryId = dictionary.id;
+            for (let dictionary of dictionaries) {
+            const a = document.createElement('a');
 
-            div.innerHTML = `
-                <div class="bg-dark rounded-2 m-1 p-2 dictionary-name-label">${dictionary.name}</div>
+            a.className = "border rounded-2 m-1 hover-shadow d-block";
+            a.href = `/Home/Dictionary?id=${dictionary.id}`;
+            a.dataset.dictionaryId = dictionary.id;
+            a.innerHTML = `
+                <div class="bg-dark rounded-2 m-1 text-white">
+                    ${dictionary.name}
+                </div>
             `;
 
-            container.appendChild(div);
+            container.appendChild(a);
         }
     }
 </script>

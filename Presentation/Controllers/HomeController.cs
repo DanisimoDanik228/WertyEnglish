@@ -10,5 +10,9 @@ namespace WertyEnglish.Controllers
         {
             return View();
         }
+        public IActionResult Dictionary(long id)
+        {
+            return View(id);
+        }
     }
 }

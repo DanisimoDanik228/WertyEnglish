@@ -8,6 +8,6 @@ namespace Models
         public string Word { get; set; }
         public string Translate { get; set; }
         public long DictionaryId { get; set; }
-        public Dictionary Dictionary { get; set; }
+        public Dictionary? Dictionary { get; set; }
     }
 }

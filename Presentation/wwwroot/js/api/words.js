@@ -42,3 +42,31 @@ async function DeletePairWord(dictionaryId, id) {
 
     return await response.json();
 }
+
+async function GetAllDictionaries() {
+    let response = await fetch('/api/Dictionary/GetAllDictionaryies');
+    return await response.json();
+}
+
+async function CreateDictionary(name) {
+    let response = await fetch(`/api/Dictionary/CreateDictionary?name=${name}`, {
+        method: "POST"
+    });
+    return await response.json();
+}
+
+async function DeleteDictionary(id) {
+    let response = await fetch(`/api/Dictionary/DeleteDictionary?Id=${id}`, {
+        method: "DELETE"
+    });
+    return await response.json();
+}
+
+async function UpdateDictionary(dictionary) {
+    let response = await fetch(`/api/Dictionary/UpdateDictionary`, {
+        method: "PATCH",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dictionary)
+    });
+    return await response.json();
+}

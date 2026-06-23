@@ -18,7 +18,7 @@ namespace Interface.Services
         }
         public async Task<PairWord> AddAsync(long dictionaryId, string word, string translate)
         {
-            var pairWord = new PairWord() { Word=word, Translate=translate};
+            var pairWord = new PairWord() { Word=word, Translate=translate, DictionaryId= dictionaryId };
 
             return await _pairWordRepository.AddAsync(pairWord);
         }
