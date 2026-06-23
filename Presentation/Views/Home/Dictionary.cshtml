@@ -1,0 +1,206 @@
+﻿@model long
+
+<div class="bg-black vw-100 min-vh-100 text-light px-3">
+    <div class="row">
+        <div class="col-sm-3">
+            <button type="button" class="btn btn-outline-secondary" onclick="addDitionary()">
+                Add Dictionary
+            </button>
+        </div>
+
+        <div class="col-md-6">
+            <div id="container" onclick="chooseWord(event)"></div>
+        </div>
+    </div>
+
+    <div class="modal modal-sm fade" id="addWordModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+
+                <div class="modal-header">
+                    <h5>Add New Word</h5>
+                </div>
+
+                <div class="modal-body d-flex flex-column">
+                    <input id="word" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
+                    <input id="translate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('word', 'translate')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="addWord()">Add Word</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-sm fade" id="showInfoModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+
+                <div class="modal-header">
+                    <h5>Update New Word</h5>
+                </div>
+
+                <div class="modal-body d-flex flex-column">
+                    <input id="updateWord" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
+                    <input id="updateTranslate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('updateWord', 'updateTranslate')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="updateWord()">Update Word</button>
+                    <button class="btn btn-outline-secondary" onclick="deleteWord()">Delete Word</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    let allWords = [];
+    let selectedWordId;
+    let dictionaryId = @Model;
+    loadWords();
+
+    function chooseWord(event) {
+        const targetDiv = event.target.closest('.hover-shadow');
+
+        if (targetDiv) {
+            selectedWordId = targetDiv.getAttribute('data-word-id');
+            const wordText = targetDiv.querySelector('.bg-dark:first-child').innerText;
+            const translationText = targetDiv.querySelector('.bg-dark:last-child').innerText;
+
+            document.getElementById('updateWord').value = wordText;
+            document.getElementById('updateTranslate').value = translationText;
+
+            const modalElement = document.getElementById('showInfoModal');
+            const myModal = new bootstrap.Modal(modalElement);
+            myModal.show();
+        }
+    }
+
+    async function addWord()
+    {
+        const word = document.getElementById('word').value;
+        const translate = document.getElementById('translate').value;
+
+        if(word?.length == 0 || translate?.length == 0){
+            return;
+        }
+
+        const newWord = await CreatePairWord(word, translate);
+        allWords.push(newWord);
+        renderAllWords(allWords);
+
+        closeModal('addWordModal');
+    }
+
+    async function addDitionary()
+    {
+        const newWord = await CreatePairWord(word, translate);
+    }
+
+    async function updateWord()
+    {
+        if(!selectedWordId)
+        {
+            return;
+        }
+
+        const word = document.getElementById('updateWord').value;
+        const translate = document.getElementById('updateTranslate').value;
+
+        if(word?.length == 0 || translate?.length == 0){
+            return;
+        }
+
+        const fullWord =
+        {
+            id:selectedWordId,
+            word:word,
+            translate:translate
+        };
+        const newWord = await UpdatePairWord(fullWord);
+        const index = allWords.findIndex(w => w.id == newWord.id);
+        if (index !== -1) {
+            allWords[index] = newWord;
+            renderAllWords(allWords);
+
+            closeModal('showInfoModal');
+        }
+    }
+
+    async function deleteWord()
+    {
+        if(!selectedWordId)
+        {
+            return;
+        }
+
+        const result = await DeletePairWord(selectedWordId);
+
+        if(result)
+        {
+            const index = allWords.findIndex(w => w.id == selectedWordId);
+            if (index !== -1) {
+                allWords.splice(index, 1);
+                renderAllWords(allWords);
+
+                closeModal('showInfoModal');
+            }
+        }
+    }
+
+    async function translateWord(processWord, processTranslate)
+    {
+        const word = document.getElementById(processWord).value;
+        if(word?.length == 0){
+            return;
+        }
+
+        const translate = await TranslateWord(word);
+        document.getElementById(processTranslate).value = translate;
+    }
+
+    function closeModal(idModal)
+    {
+        const modalElement = document.getElementById(idModal);
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    function renderAllWords(words)
+    {
+        const container = document.getElementById('container');
+        container.innerHTML = "";
+
+        for(let word of words){
+            const div = document.createElement('div');
+
+            div.className = "border rounded-2 m-1 hover-shadow";
+            div.dataset.wordId = word.id;
+
+            div.innerHTML = `
+                <div class="bg-dark rounded-2 m-1">${word.word}</div>
+                <div class="bg-dark rounded-2 m-1">${word.translate}</div>
+            `;
+
+            container.appendChild(div);
+        }
+    }
+
+    async function loadWords()
+    {
+        allWords = await GetAllWords();
+        renderAllWords(allWords);
+    }
+</script>

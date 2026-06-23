@@ -21,9 +21,9 @@ namespace WertyEnglish.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllWords()
+        public async Task<IActionResult> GetAllWords(long DitionaryId)
         {
-            var allWords = await _pairWordService.GetAllWordsAsync();
+            var allWords = await _pairWordService.GetAllWordsAsync(DitionaryId);
             return Ok(allWords);
         }
 
@@ -35,9 +35,9 @@ namespace WertyEnglish.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePairWord(string Word, string Translate)
+        public async Task<IActionResult> CreatePairWord(long DitionaryId, string Word, string Translate)
         {
-            var word = await _pairWordService.AddAsync(Word, Translate);
+            var word = await _pairWordService.AddAsync(DitionaryId, Word, Translate);
             return Ok(word);
         }
 

@@ -8,9 +8,9 @@ namespace Infrastructure.Repositories
         private static readonly List<PairWord> _storage = new List<PairWord>();
         private static int _nextId = 1;
 
-        public async Task<IEnumerable<PairWord>> GetAllAsync()
+        public async Task<IEnumerable<PairWord>> GetAllAsync(long dictionaryId)
         {
-            return _storage.AsEnumerable();
+            throw new NotImplementedException();
         }
 
         public async Task<PairWord?> GetByIdAsync(long id)

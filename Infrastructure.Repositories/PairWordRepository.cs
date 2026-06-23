@@ -16,9 +16,12 @@ namespace Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<PairWord>> GetAllAsync()
+        public async Task<IEnumerable<PairWord>> GetAllAsync(long dictionaryId)
         {
-            return await _dbContext.PairWords.AsNoTracking().ToListAsync();
+            return await _dbContext.PairWords
+                .AsNoTracking()
+                .Where(w => w.DictionaryId == dictionaryId)
+                .ToListAsync();
         }
 
         public async Task<PairWord?> GetByIdAsync(long id)

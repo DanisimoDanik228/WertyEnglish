@@ -1,5 +1,5 @@
-﻿async function GetAllWords() {
-    let response = await fetch('/api/Word/GetAllWords');
+﻿async function GetAllWords(dictionaryId) {
+    let response = await fetch(`/api/Word/GetAllWords?DitionaryId=${dictionaryId}`);
 
     return await response.json();
 }
@@ -12,8 +12,8 @@ async function TranslateWord(word) {
 
 
 
-async function CreatePairWord(word, translate) {
-    let response = await fetch(`/api/Word/CreatePairWord?Word=${word}&Translate=${translate}`,
+async function CreatePairWord(dictionaryId, word, translate) {
+    let response = await fetch(`/api/Word/CreatePairWord?DitionaryId=${dictionaryId}&Word=${word}&Translate=${translate}`,
         {
             method:"POST"
         });
@@ -34,8 +34,8 @@ async function UpdatePairWord(word) {
     return await response.json();
 }
 
-async function DeletePairWord(id) {
-    let response = await fetch(`/api/Word/DeletePairWord?Id=${id}`,
+async function DeletePairWord(dictionaryId, id) {
+    let response = await fetch(`/api/Word/DeletePairWord?DitionaryId=${dictionaryId}&Id=${id}`,
         {
             method: "DELETE"
         });
