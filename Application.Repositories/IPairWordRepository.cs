@@ -6,7 +6,7 @@ namespace Repositories
 {
     public interface IPairWordRepository
     {
-        Task<IEnumerable<PairWord>> GetAllAsync();
+        Task<IEnumerable<PairWord>> GetAllAsync(long dictionaryId);
 
         Task<PairWord?> GetByIdAsync(long id);
 

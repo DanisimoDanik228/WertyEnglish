@@ -1,4 +1,5 @@
 using Application.Options;
+using Application.Repositories;
 using Application.Services;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -22,9 +23,11 @@ namespace WertyEnglish
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddSingleton<IPairWordRepository, PairWordRepository>();
+            builder.Services.AddSingleton<IDictionaryRepository, DictionaryRepository>();
 
             builder.Services.AddSingleton<IPairWordService, PairWordService>();
             builder.Services.AddSingleton<ITranslateService, TranslateService>();
+            builder.Services.AddSingleton<IDictionaryService, DictionaryService>();
 
             builder.Services.AddHttpClient<ITranslateService, TranslateService>();
 
