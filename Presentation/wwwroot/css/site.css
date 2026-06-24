@@ -2,3 +2,7 @@
     background-color: #535353;
     transform: translateX(10px);
 }
+
+.hover-moved:hover {
+    transform: translateX(10px);
+}

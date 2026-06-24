@@ -122,14 +122,10 @@
             for (let dictionary of dictionaries) {
             const a = document.createElement('a');
 
-            a.className = "border rounded-2 m-1 hover-shadow d-block";
+            a.className = "m-1 hover-moved d-block text-white";
             a.href = `/Home/Dictionary?id=${dictionary.id}`;
             a.dataset.dictionaryId = dictionary.id;
-            a.innerHTML = `
-                <div class="bg-dark rounded-2 m-1 text-white">
-                    ${dictionary.name}
-                </div>
-            `;
+            a.innerText = dictionary.name;
 
             container.appendChild(a);
         }
