@@ -1,11 +1,22 @@
 ﻿@model long
 
-<div class="bg-black vw-100 min-vh-100 text-light px-3">
-    <div class="row">
-        <div class="col-sm-3">
-            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#addWordModal">
-                Add Word
-            </button>
+<div class="bg-black container-fluid vh-100 text-light p-3">
+    <div class="row h-100">
+        <div class="col-2 d-flex flex-column justify-content-between">
+            <div>  
+                <a href="/" class="btn btn-outline-secondary w-100">
+                    Back Home
+                </a>
+                <button type="button" class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#addWordModal">
+                    Add Word
+                </button>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-outline-danger w-100" onclick="deleteDictionary()">
+                    Delete Dictionary
+                </button>
+            </div>
         </div>
 
         <div class="col-md-6">
@@ -197,5 +208,11 @@
     {
         allWords = await GetAllWords(dictionaryId);
         renderAllWords(allWords);
+    }
+
+    async function deleteDictionary()
+    {
+        await DeleteDictionary(dictionaryId);
+        window.location.href = "https://www.google.com";
     }
 </script>
