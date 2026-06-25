@@ -2,7 +2,10 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "applicationUrl": "http://localhost:8080"
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development" 
+      }
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json"

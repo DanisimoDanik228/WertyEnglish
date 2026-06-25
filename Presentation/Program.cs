@@ -22,12 +22,12 @@ namespace WertyEnglish
 
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddSingleton<IPairWordRepository, PairWordRepository>();
-            builder.Services.AddSingleton<IDictionaryRepository, DictionaryRepository>();
+            builder.Services.AddScoped<IPairWordRepository, PairWordRepository>();
+            builder.Services.AddScoped<IDictionaryRepository, DictionaryRepository>();
 
-            builder.Services.AddSingleton<IPairWordService, PairWordService>();
-            builder.Services.AddSingleton<ITranslateService, TranslateService>();
-            builder.Services.AddSingleton<IDictionaryService, DictionaryService>();
+            builder.Services.AddScoped<IPairWordService, PairWordService>();
+            builder.Services.AddScoped<ITranslateService, TranslateService>();
+            builder.Services.AddScoped<IDictionaryService, DictionaryService>();
 
             builder.Services.AddHttpClient<ITranslateService, TranslateService>();
 

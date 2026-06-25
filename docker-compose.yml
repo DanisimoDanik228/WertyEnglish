@@ -6,6 +6,7 @@ services:
         dockerfile: Presentation/Dockerfile
     ports:
       - "5051:8080"
+
   libretranslate:
     image: libretranslate/libretranslate
     container_name: libretranslate
@@ -17,7 +18,7 @@ services:
   db:
     image: postgres:latest
     ports:
-      - "5432:5432"
+      - ":5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
