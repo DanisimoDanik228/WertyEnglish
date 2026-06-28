@@ -10,7 +10,7 @@ namespace Application.Services
     {
         Task<IEnumerable<DictionaryDto>> GetAllDictionariesAsync();
         Task<Dictionary?> GetDictionaryByIdAsync(long id);
-        Task<Dictionary> CreateDictionaryAsync(string name);
+        Task<DictionaryDto> CreateDictionaryAsync(string name);
         Task<bool> DeleteDictionaryAsync(long id);
     }
 }

@@ -28,14 +28,21 @@ namespace Infrastructure.Services
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<Dictionary> CreateDictionaryAsync(string name)
+        public async Task<DictionaryDto> CreateDictionaryAsync(string name)
         {
-            var newDictionary = new Dictionary
+            var res = await _repository.AddAsync(new Dictionary()
             {
                 Name = name
+            });
+            
+            var resDictionaryDto = new DictionaryDto
+            {
+                Id = res.Id,
+                Name = res.Name,
+                CountWord = 0
             };
 
-            return await _repository.AddAsync(newDictionary);
+            return resDictionaryDto;
         }
 
         public async Task<bool> DeleteDictionaryAsync(long id)
