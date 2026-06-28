@@ -125,7 +125,7 @@
             a.className = "m-1 hover-moved d-block text-white";
             a.href = `/Home/Dictionary?id=${dictionary.id}`;
             a.dataset.dictionaryId = dictionary.id;
-            a.innerText = dictionary.name;
+            a.innerText = `(${dictionary.countWord}) ${dictionary.name}`;
 
             container.appendChild(a);
         }

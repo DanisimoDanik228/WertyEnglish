@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using Application.Dto;
+using Application.Repositories;
 using Application.Services;
 using Domain.Models;
 using System;
@@ -17,7 +18,7 @@ namespace Infrastructure.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Dictionary>> GetAllDictionariesAsync()
+        public async Task<IEnumerable<DictionaryDto>> GetAllDictionariesAsync()
         {
             return await _repository.GetAllAsync();
         }
@@ -27,14 +28,21 @@ namespace Infrastructure.Services
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<Dictionary> CreateDictionaryAsync(string name)
+        public async Task<DictionaryDto> CreateDictionaryAsync(string name)
         {
-            var newDictionary = new Dictionary
+            var res = await _repository.AddAsync(new Dictionary()
             {
                 Name = name
+            });
+            
+            var resDictionaryDto = new DictionaryDto
+            {
+                Id = res.Id,
+                Name = res.Name,
+                CountWord = 0
             };
 
-            return await _repository.AddAsync(newDictionary);
+            return resDictionaryDto;
         }
 
         public async Task<bool> DeleteDictionaryAsync(long id)

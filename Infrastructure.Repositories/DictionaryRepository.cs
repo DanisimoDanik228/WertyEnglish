@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using Application.Dto;
+using Application.Repositories;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -17,9 +18,18 @@ namespace Infrastructure.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<IEnumerable<Dictionary>> GetAllAsync()
+        public async Task<IEnumerable<DictionaryDto>> GetAllAsync()
         {
-            return await _dbContext.Dictionaries.AsNoTracking().ToListAsync();
+            return await _dbContext
+                .Dictionaries
+                .Select(d => new DictionaryDto()
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    CountWord = d.PairWords.Count()
+                })
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<Dictionary?> GetByIdAsync(long id)
