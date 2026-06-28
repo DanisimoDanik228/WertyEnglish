@@ -5,16 +5,19 @@
         <div class="col-3 d-flex flex-column justify-content-between">
             <div>  
                 <a href="/" class="btn btn-outline-secondary w-100" title="Back Home">
-                    <i class="bi bi-house-door-fill fs-5"></i>
+                    <i class="bi bi-house-door fs-5"></i>
                 </a>
                 <button type="button" class="btn btn-outline-secondary w-100" title="Add Word" data-bs-toggle="modal" data-bs-target="#addWordModal">
-                    <i class="bi bi-plus-circle-fill fs-5"></i>
+                    <i class="bi bi-plus-circle fs-5"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary w-100" title="Load File" onclick="loadFile()">
+                    <i class="bi bi-download fs-5"></i>
                 </button>
             </div>
 
             <div>
                 <button type="button" class="btn btn-outline-danger w-100" title="Delete Dictionary" onclick="deleteDictionary()">
-                    <i class="bi bi-trash-fill fs-5"></i>
+                    <i class="bi bi-trash fs-5"></i>
                 </button>
             </div>
         </div>
@@ -214,5 +217,27 @@
     {
         await DeleteDictionary(dictionaryId);
         window.location.href = "/";
+    }
+
+    async function loadFile()
+    {
+        const [fileHandle] = await window.showOpenFilePicker();
+
+        const file = await fileHandle.getFile();
+
+        const text = await file.text();
+        const words = text.split(/\r?\n/);
+
+        let newWords = [];
+        for(let word of words)
+        {
+            let translate = await TranslateWord(word);        
+            
+            const newWord = await CreatePairWord(dictionaryId, word, translate);
+            newWords.push(newWord);
+        }
+
+        allWords.push(...newWords);
+        renderAllWords(allWords);
     }
 </script>

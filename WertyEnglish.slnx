@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Application/">
+    <Project Path="Application.Dto/Application.Dto.csproj" Id="3cb315b5-7e65-4659-8f95-e2b97a87eae5" />
     <Project Path="Application.Options/Application.Options.csproj" Id="4f829d47-857f-4273-83da-b7afd4988554" />
     <Project Path="Application.Repositories/Application.Repositories.csproj" />
     <Project Path="Application.Services/Application.Services.csproj" Id="97c35153-0365-4e0d-a223-51a69bc94a2f" />
