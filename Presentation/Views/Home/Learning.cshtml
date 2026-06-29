@@ -1,41 +1,53 @@
 ﻿@model long
 
-<div class="bg-black text-light p-3 vh-100 ">
-    <div class="row h-100">
-        <div class="col-1 col-sm-4">
-            <a href="/" class="btn btn-outline-secondary" title="Back Home">
-                <i class="bi bi-house-door fs-5"></i>
-            </a>                
-            <a href="/Home/Dictionary?id=@Model" class="btn btn-outline-secondary" title="Back Dictionary">
-                <i class="bi bi-arrow-left fs-5"></i>
-            </a>
+<div class="bg-black text-light vh-100 d-flex flex-column justify-content-between p-3">
+    <div>
+        <a href="/" class="btn btn-outline-secondary" title="Back Home">
+            <i class="bi bi-house-door fs-5"></i>
+        </a>                
+        <a href="/Home/Dictionary?id=@Model" class="btn btn-outline-secondary" title="Back Dictionary">
+            <i class="bi bi-arrow-left fs-5"></i>
+        </a>
+
+        <div class="d-flex justify-content-between w-100 p-1">
+            <h6 id="countUnknownWord" class="text-danger">
+                -1
+            </h6>
+            
+            <h6 id="countLeftWord">
+                -1/-1
+            </h6>
+
+            <h6 id="countKnownWord" class="text-success">
+                -1
+            </h6>
         </div>
+    </div>
 
-        <div class="col-10 col-sm-4 d-flex align-items-center">
-            <div class="border border-2 rounded-2 w-100">
-                <div class="text-center">
-                    <div id ="originalName">
+    <div class="d-flex justify-content-center">
+        <div class="border border-2 rounded-2 col-10 col-sm-4 shadow-light p-2 position-relative">
+            <div class="position-absolute top-0 start-0 w-50 h-100" onclick="makeUnkown()" style="z-index: 1;">
+            </div>
 
-                    </div>
+            <div class="position-absolute top-0 end-0 w-50 h-100" onclick="makeKnown()" style="z-index: 1;">
+            </div>
 
-                    <div id ="translateName">
+            <div class="text-center">
+                <div id ="originalName">
 
-                    </div>
                 </div>
 
-                <div class="d-flex justify-content-between align-content-between p-2">
-                    <button type="button" class="btn btn-outline-secondary" onclick="movePrevious()">
-                        Previous
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" onclick="moveNext()">
-                        Next
-                    </button>
+                <div id ="translateName">
+
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-1 col-sm-4">
-        </div>
+    <div>
+        <button type="button" class="btn btn-outline-secondary" onclick="movePrevious()">
+            Previous
+        </button>
     </div>
 </div>
 
@@ -43,7 +55,35 @@
     let allWords = [];
     let dictionaryId = @Model;
     let indexWord = -1;
+
+    // array of id word and bool (true => known)
+    let resultWork = [];
+    let countKnown = 0;
+    let countUnknown = 0;    
+    
     loadWords();
+
+    function makeKnown()
+    {
+        countKnown++;
+        resultWork.push({
+            id: allWords[indexWord].id,
+            result: true
+        });
+
+        moveNext();
+    }
+
+    function makeUnkown()
+    {
+        countUnknown++;
+        resultWork.push({
+            id: allWords[indexWord].id,
+            result: false
+        });
+
+        moveNext();
+    }
 
     function movePrevious()
     {   
@@ -54,6 +94,18 @@
         indexWord--;
         document.getElementById('originalName').innerText = allWords[indexWord].word;
         document.getElementById('translateName').innerText = allWords[indexWord].translate;
+        let t = resultWork.pop();
+
+        if(t.result)
+        {
+            countKnown--;
+        }
+        else
+        {
+            countUnknown--;
+        }
+
+        renderCountWord();
     }
 
     function moveNext()
@@ -66,6 +118,8 @@
         indexWord++;
         document.getElementById('originalName').innerText = allWords[indexWord].word;
         document.getElementById('translateName').innerText = allWords[indexWord].translate;
+
+        renderCountWord();
     }
 
     function finishLearning()
@@ -73,9 +127,17 @@
         alert("You have finished dictionary");
     }
 
+    function renderCountWord()
+    {
+        document.getElementById('countUnknownWord').innerText = countUnknown;
+        document.getElementById('countLeftWord').innerText = `${indexWord + 1}/${allWords.length}`;
+        document.getElementById('countKnownWord').innerText = countKnown;
+    }
+
     async function loadWords()
     {
         allWords = await GetAllWords(dictionaryId);
         moveNext();
+        renderCountWord();
     }
 </script>
