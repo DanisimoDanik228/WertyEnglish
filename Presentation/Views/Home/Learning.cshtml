@@ -1,0 +1,81 @@
+﻿@model long
+
+<div class="bg-black text-light p-3 vh-100 ">
+    <div class="row h-100">
+        <div class="col-1 col-sm-4">
+            <a href="/" class="btn btn-outline-secondary" title="Back Home">
+                <i class="bi bi-house-door fs-5"></i>
+            </a>                
+            <a href="/Home/Dictionary?id=@Model" class="btn btn-outline-secondary" title="Back Dictionary">
+                <i class="bi bi-arrow-left fs-5"></i>
+            </a>
+        </div>
+
+        <div class="col-10 col-sm-4 d-flex align-items-center">
+            <div class="border border-2 rounded-2 w-100">
+                <div class="text-center">
+                    <div id ="originalName">
+
+                    </div>
+
+                    <div id ="translateName">
+
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-content-between p-2">
+                    <button type="button" class="btn btn-outline-secondary" onclick="movePrevious()">
+                        Previous
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="moveNext()">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-1 col-sm-4">
+        </div>
+    </div>
+</div>
+
+<script>
+    let allWords = [];
+    let dictionaryId = @Model;
+    let indexWord = -1;
+    loadWords();
+
+    function movePrevious()
+    {   
+        if(indexWord <= 0){
+            return;
+        }
+
+        indexWord--;
+        document.getElementById('originalName').innerText = allWords[indexWord].word;
+        document.getElementById('translateName').innerText = allWords[indexWord].translate;
+    }
+
+    function moveNext()
+    {
+        if(indexWord >= allWords.length - 1){
+            finishLearning();
+            return;
+        }
+
+        indexWord++;
+        document.getElementById('originalName').innerText = allWords[indexWord].word;
+        document.getElementById('translateName').innerText = allWords[indexWord].translate;
+    }
+
+    function finishLearning()
+    {
+        alert("You have finished dictionary");
+    }
+
+    async function loadWords()
+    {
+        allWords = await GetAllWords(dictionaryId);
+        moveNext();
+    }
+</script>
