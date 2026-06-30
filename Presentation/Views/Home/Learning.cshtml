@@ -71,15 +71,25 @@
 
     let resultWork = [];
     let countKnown = 0;
-    let countUnknown = 0;    
+    let countUnknown = 0;
     
-    loadWords();
+    const unknownWords = localStorage.getItem("unknownWords");
+    if(unknownWords)
+    {
+        allWords = JSON.parse(unknownWords).map(w => w.word);
+        moveNext();
+        renderCountWord();
+    }
+    else
+    {
+        loadWords();
+    }
 
     function makeKnown()
     {
         countKnown++;
         resultWork.push({
-            id: allWords[indexWord].id,
+            word: allWords[indexWord],
             result: true
         });
 
@@ -90,7 +100,7 @@
     {
         countUnknown++;
         resultWork.push({
-            id: allWords[indexWord].id,
+            word: allWords[indexWord],
             result: false
         });
 
@@ -136,7 +146,11 @@
 
     function finishLearning()
     {
-        alert("You have finished dictionary");
+        const jsonArray = JSON.stringify(resultWork.filter(w => w.result));
+        localStorage.setItem("unknownWords", jsonArray);
+        localStorage.setItem("countAllWords", allWords.length);
+
+        window.location.href = `/Home/LearningResult?Id=${dictionaryId}`;
     }
 
     function renderCountWord()

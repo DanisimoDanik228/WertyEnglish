@@ -18,5 +18,9 @@ namespace WertyEnglish.Controllers
         {
             return View(id);
         }
+        public IActionResult LearningResult(long id)
+        {
+            return View(id);
+        }
     }
 }

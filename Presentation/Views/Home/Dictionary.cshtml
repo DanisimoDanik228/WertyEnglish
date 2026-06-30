@@ -84,6 +84,7 @@
     let allWords = [];
     let selectedWordId;
     let dictionaryId = @Model;
+    localStorage.removeItem("unknownWords");
     loadWords();
 
     function chooseWord(event) {
