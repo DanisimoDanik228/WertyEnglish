@@ -2,6 +2,6 @@
 {
     public class TranslateSetting
     {
-        public string AdressLibreTranslate { get; set; }
+        public string BaseUrl { get; set; }
     }
 }

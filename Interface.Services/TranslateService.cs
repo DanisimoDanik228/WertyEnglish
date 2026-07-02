@@ -21,7 +21,7 @@ namespace Infrastructure.Services
             _translateSetting = options.Value;
             _httpClient = httpClient;
 
-            _httpClient.BaseAddress = new Uri(_translateSetting.AdressLibreTranslate);
+            _httpClient.BaseAddress = new Uri(_translateSetting.BaseUrl);
         }
 
         public async Task<string> TranslateWord(string word)

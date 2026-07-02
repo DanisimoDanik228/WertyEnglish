@@ -7,11 +7,14 @@
                 <a href="/" class="btn btn-outline-secondary" title="Back Home">
                     <i class="bi bi-house-door fs-5"></i>
                 </a>
+                <a href="/Home/Learning?Id=@Model" class="btn btn-outline-secondary" title="Learning">
+                    <i class="bi bi-book fs-5"></i>
+                </a>
                 <button type="button" class="btn btn-outline-secondary" title="Add Word" data-bs-toggle="modal" data-bs-target="#addWordModal">
                     <i class="bi bi-plus-circle fs-5"></i>
                 </button>
                 <button type="button" class="btn btn-outline-secondary" title="Load File" onclick="loadFile()">
-                    <i class="bi bi-download fs-5"></i>
+                    <i class="bi bi-file-earmark-text fs-5"></i>
                 </button>
             </div>
 
@@ -81,6 +84,7 @@
     let allWords = [];
     let selectedWordId;
     let dictionaryId = @Model;
+    localStorage.removeItem("unknownWords");
     loadWords();
 
     function chooseWord(event) {

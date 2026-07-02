@@ -34,6 +34,9 @@ namespace WertyEnglish
             builder.Services.Configure<TranslateSetting>(
                 builder.Configuration.GetSection("TranslateSetting"));
 
+            builder.Services.Configure<AudioSettings>(
+                builder.Configuration.GetSection("AudioSettings"));
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())

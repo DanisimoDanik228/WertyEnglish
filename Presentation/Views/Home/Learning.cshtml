@@ -1,0 +1,205 @@
+﻿@model long
+
+<div class="bg-black text-light vh-100 d-flex flex-column justify-content-between p-3">
+    <div>
+        <a href="/" class="btn btn-outline-secondary" title="Back Home">
+            <i class="bi bi-house-door fs-5"></i>
+        </a>                
+        <a href="/Home/Dictionary?id=@Model" class="btn btn-outline-secondary" title="Back Dictionary">
+            <i class="bi bi-arrow-left fs-5"></i>
+        </a>
+
+        <div class="d-flex justify-content-between w-100 p-1">
+            <h6 id="countUnknownWord" class="text-danger">
+                -1
+            </h6>
+            
+            <h6 id="countLeftWord">
+                -1/-1
+            </h6>
+
+            <h6 id="countKnownWord" class="text-success">
+                -1
+            </h6>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <div class="border border-2 rounded-2 col-10 col-sm-4 shadow-light p-2 position-relative">
+            <!--
+                <div class="position-absolute top-0 start-0 w-50 h-100" onclick="makeUnkown()" style="z-index: 1;">
+                </div>
+
+                <div class="position-absolute top-0 end-0 w-50 h-100" onclick="makeKnown()" style="z-index: 1;">
+                </div>
+            -->
+
+            <div class="text-center p-2 pb-3">
+                <div class="visually" id="originalName">
+                </div>
+
+                <div class="visually-hidden" id ="translateName">
+
+                </div>
+            </div>
+            <hr class="my-0">
+            <div class="d-flex justify-content-between">
+                <button class="btn text-danger" onclick="makeUnkown()">
+                    Unknown
+                </button>
+                <button class="btn text-white" onclick="changeIsShowTranslate()">
+                    Show
+                </button>
+                <button class="btn text-success" onclick="makeKnown()">
+                    Known
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-outline-secondary" onclick="movePrevious()">
+            Previous
+        </button>
+        <button type="button" class="btn btn-outline-secondary" onclick="playWord()">
+            <i class="bi bi-volume-up fs-6"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    let isShowTranslate = false;
+    let allWords = [];
+    let dictionaryId = @Model;
+    let indexWord = -1;
+
+    let resultWork = [];
+    let countKnown = 0;
+    let countUnknown = 0;
+    
+    const unknownWords = localStorage.getItem("unknownWords");
+    if(unknownWords)
+    {
+        allWords = JSON.parse(unknownWords).map(w => w.word);
+        moveNext();
+        renderCountWord();
+    }
+    else
+    {
+        loadWords();
+    }
+
+    function makeKnown()
+    {
+        isShowTranslate = false;
+        countKnown++;
+        resultWork.push({
+            word: allWords[indexWord],
+            result: true
+        });
+
+        moveNext();
+    }
+
+    function makeUnkown()
+    {
+        isShowTranslate = false;
+        countUnknown++;
+        resultWork.push({
+            word: allWords[indexWord],
+            result: false
+        });
+
+        moveNext();
+    }
+
+    function movePrevious()
+    {
+        isShowTranslate = false;
+        if(indexWord <= 0){
+            return;
+        }
+
+        indexWord--;
+        document.getElementById('originalName').innerText = allWords[indexWord].word;
+        document.getElementById('translateName').innerText = allWords[indexWord].translate;
+        let t = resultWork.pop();
+
+        if(t.result)
+        {
+            countKnown--;
+        }
+        else
+        {
+            countUnknown--;
+        }
+
+        renderCountWord();
+        showTranslate();
+    }
+
+    function moveNext()
+    {
+        if(indexWord >= allWords.length - 1){
+            finishLearning();
+            return;
+        }
+
+        indexWord++;
+        document.getElementById('originalName').innerText = allWords[indexWord].word;
+        document.getElementById('translateName').innerText = allWords[indexWord].translate;
+
+        renderCountWord();
+        showTranslate();
+    }
+
+    function finishLearning()
+    {
+        const jsonArray = JSON.stringify(resultWork.filter(w => w.result));
+        localStorage.setItem("unknownWords", jsonArray);
+        localStorage.setItem("countAllWords", allWords.length);
+
+        window.location.href = `/Home/LearningResult?Id=${dictionaryId}`;
+    }
+
+    function renderCountWord()
+    {
+        document.getElementById('countUnknownWord').innerText = countUnknown;
+        document.getElementById('countLeftWord').innerText = `${indexWord + 1}/${allWords.length}`;
+        document.getElementById('countKnownWord').innerText = countKnown;
+    }
+
+    function changeIsShowTranslate()
+    {
+        isShowTranslate = !isShowTranslate;
+        showTranslate();
+    }
+
+    function showTranslate()
+    {
+        if(isShowTranslate)
+        {
+            document.getElementById('originalName').className = "visually-hidden";
+            document.getElementById('translateName').className = "visually";
+        }
+        else
+        {
+            document.getElementById('originalName').className = "visually";
+            document.getElementById('translateName').className = "visually-hidden";
+        }
+    }
+
+    function playWord()
+    {
+        const word = allWords[indexWord].word;
+
+        voiceWord(word);
+    }
+
+    async function loadWords()
+    {
+        allWords = await GetAllWords(dictionaryId);
+        moveNext();
+        renderCountWord();
+    }
+</script>
