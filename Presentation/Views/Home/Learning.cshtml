@@ -47,7 +47,7 @@
                 <button class="btn text-danger" onclick="makeUnkown()">
                     Unknown
                 </button>
-                <button class="btn text-white" onclick="showTranslate()">
+                <button class="btn text-white" onclick="changeIsShowTranslate()">
                     Show
                 </button>
                 <button class="btn text-success" onclick="makeKnown()">
@@ -65,6 +65,7 @@
 </div>
 
 <script>
+    let isShowTranslate = false;
     let allWords = [];
     let dictionaryId = @Model;
     let indexWord = -1;
@@ -87,6 +88,7 @@
 
     function makeKnown()
     {
+        isShowTranslate = false;
         countKnown++;
         resultWork.push({
             word: allWords[indexWord],
@@ -98,6 +100,7 @@
 
     function makeUnkown()
     {
+        isShowTranslate = false;
         countUnknown++;
         resultWork.push({
             word: allWords[indexWord],
@@ -108,7 +111,8 @@
     }
 
     function movePrevious()
-    {   
+    {
+        isShowTranslate = false;
         if(indexWord <= 0){
             return;
         }
@@ -128,6 +132,7 @@
         }
 
         renderCountWord();
+        showTranslate();
     }
 
     function moveNext()
@@ -142,6 +147,7 @@
         document.getElementById('translateName').innerText = allWords[indexWord].translate;
 
         renderCountWord();
+        showTranslate();
     }
 
     function finishLearning()
@@ -160,9 +166,15 @@
         document.getElementById('countKnownWord').innerText = countKnown;
     }
 
+    function changeIsShowTranslate()
+    {
+        isShowTranslate = !isShowTranslate;
+        showTranslate();
+    }
+
     function showTranslate()
     {
-        if(document.getElementById('originalName').className == "visually")
+        if(isShowTranslate)
         {
             document.getElementById('originalName').className = "visually-hidden";
             document.getElementById('translateName').className = "visually";
