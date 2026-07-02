@@ -61,6 +61,9 @@
         <button type="button" class="btn btn-outline-secondary" onclick="movePrevious()">
             Previous
         </button>
+        <button type="button" class="btn btn-outline-secondary" onclick="playWord()">
+            <i class="bi bi-volume-up fs-6"></i>
+        </button>
     </div>
 </div>
 
@@ -184,6 +187,13 @@
             document.getElementById('originalName').className = "visually";
             document.getElementById('translateName').className = "visually-hidden";
         }
+    }
+
+    function playWord()
+    {
+        const word = allWords[indexWord].word;
+
+        voiceWord(word);
     }
 
     async function loadWords()
