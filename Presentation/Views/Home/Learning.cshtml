@@ -64,6 +64,9 @@
         <button type="button" class="btn btn-outline-secondary" onclick="playWord()">
             <i class="bi bi-volume-up fs-6"></i>
         </button>
+        <button title="Remove word totally" type="button" class="btn btn-outline-secondary" onclick="removeWord()">
+            <i class="bi bi-trash fs-6"></i>
+        </button>
     </div>
 </div>
 
@@ -194,6 +197,18 @@
         const word = allWords[indexWord].word;
 
         voiceWord(word);
+    }
+
+    function removeWord()
+    {   
+        const confirmed = confirm("Are you sure for remove word forever?");
+
+        if (confirmed) {
+            DeletePairWord(dictionaryId, allWords[indexWord].id);
+            allWords.splice(indexWord,1);
+            indexWord--;
+            moveNext();
+        }
     }
 
     async function loadWords()
