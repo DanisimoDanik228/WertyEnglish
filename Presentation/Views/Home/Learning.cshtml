@@ -155,7 +155,7 @@
 
     function finishLearning()
     {
-        const jsonArray = JSON.stringify(resultWork.filter(w => w.result));
+        const jsonArray = JSON.stringify(resultWork.filter(w => !w.result));
         localStorage.setItem("unknownWords", jsonArray);
         localStorage.setItem("countAllWords", allWords.length);
 
