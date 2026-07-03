@@ -49,7 +49,7 @@ namespace WertyEnglish.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeletePairWord(long Id)
+        public async Task<IActionResult> DeletePairWord(long DictionaryId, long Id)
         {
             var res = await _pairWordService.DeleteAsync(Id);
             return Ok(res);
