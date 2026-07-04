@@ -11,7 +11,6 @@ class BackgroundHandler
     private static HttpClient client = new HttpClient();
     private const int defaultDictionaryId = 1;
 
-    // WinAPI константы
     private const int WH_KEYBOARD_LL = 13;
     private const int WM_KEYDOWN = 0x0100;
     private const int VK_CONTROL = 0x11;
@@ -27,7 +26,6 @@ class BackgroundHandler
 
         Console.WriteLine("Программа запущена. Нажмите Ctrl+C дважды для отправки в API.");
 
-        // Для работы хука нужен цикл обработки сообщений
         Application.Run();
 
         UnhookWindowsHookEx(_hookID);
@@ -52,7 +50,6 @@ class BackgroundHandler
 
             if (vkCode == VK_C)
             {
-                // Проверяем, зажат ли Ctrl в данный момент
                 bool isCtrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
 
                 if (isCtrlPressed)
@@ -62,8 +59,7 @@ class BackgroundHandler
 
                     if (elapsed < DoubleClickInterval)
                     {
-                        // Сработало двойное нажатие
-                        _lastClickTime = DateTime.MinValue; // Сброс
+                        _lastClickTime = DateTime.MinValue;
                         HandleAction();
                     }
                     else
@@ -73,7 +69,6 @@ class BackgroundHandler
                 }
             }
         }
-        // Возвращаем управление системе, чтобы Ctrl+C сработал в активном окне
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
     }
 
@@ -81,8 +76,7 @@ class BackgroundHandler
     {
         try
         {
-            // Ждем 150мс, чтобы ОС успела скопировать текст в буфер
-            await System.Threading.Tasks.Task.Delay(150);
+            await Task.Delay(150);
 
             if (Clipboard.ContainsText())
             {
@@ -91,10 +85,12 @@ class BackgroundHandler
 
                 Console.WriteLine("Текст получен: " + text);
 
-                // Используем Uri.EscapeDataString чтобы пробелы не ломали URL
-                string url = $"https://english.werty.uk/api/Word/CreatePairWord?DitionaryId={defaultDictionaryId}&Word={Uri.EscapeDataString(text)}&Translate=forget_implamant";
+                string word = Uri.EscapeDataString(text);
+                string translateUrl = $"https://english.werty.uk/api/Word/TranslateWord?Word={word}";
+                var translate = await client.GetStringAsync(translateUrl);
+                string url = $"https://english.werty.uk/api/Word/CreatePairWord?DitionaryId={defaultDictionaryId}&Word={word}&Translate={Uri.EscapeDataString(translate)}";
 
-                Console.WriteLine("Отправка: " + url);
+                Console.WriteLine("Отправка: " + url + " / " + translate);
 
                 var response = await client.PostAsync(url, null);
                 Console.WriteLine("Ответ сервера: " + response.StatusCode);
