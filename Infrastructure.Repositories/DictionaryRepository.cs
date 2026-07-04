@@ -1,4 +1,6 @@
-﻿using Application.Dto;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Application.Dto;
 using Application.Repositories;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -13,21 +15,20 @@ namespace Infrastructure.Repositories
     public class DictionaryRepository : IDictionaryRepository
     {
         private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public DictionaryRepository(AppDbContext dbContext)
+        public DictionaryRepository(
+            AppDbContext dbContext,
+            IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
         public async Task<IEnumerable<DictionaryDto>> GetAllAsync()
         {
             return await _dbContext
                 .Dictionaries
-                .Select(d => new DictionaryDto()
-                {
-                    Id = d.Id,
-                    Name = d.Name,
-                    CountWord = d.PairWords.Count()
-                })
+                .ProjectTo<DictionaryDto>(_mapper.ConfigurationProvider)
                 .AsNoTracking()
                 .ToListAsync();
         }
