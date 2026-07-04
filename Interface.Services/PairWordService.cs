@@ -1,4 +1,5 @@
-﻿using Application.Repositories;
+﻿using Application.Dto;
+using Application.Repositories;
 using Application.Services;
 using Models;
 using Repositories;
@@ -8,13 +9,10 @@ namespace Interface.Services
     public class PairWordService : IPairWordService
     {
         private readonly IPairWordRepository _pairWordRepository;
-        private readonly IDictionaryRepository _dictionaryRepository;
         public PairWordService(
-            IPairWordRepository pairWordRepository,
-            IDictionaryRepository dictionaryRepository)
+            IPairWordRepository pairWordRepository)
         {
             _pairWordRepository = pairWordRepository;
-            _dictionaryRepository = dictionaryRepository;
         }
         public async Task<PairWord> AddAsync(long dictionaryId, string word, string translate)
         {
@@ -23,9 +21,14 @@ namespace Interface.Services
             return await _pairWordRepository.AddAsync(pairWord);
         }
 
-        public async Task<IEnumerable<PairWord>> GetAllWordsAsync(long dictionaryId)
+        public async Task<IEnumerable<PairWordDto>> GetAllWordsAsync(long dictionaryId)
         {
-            return await _pairWordRepository.GetAllAsync(dictionaryId);
+            var t = await _pairWordRepository.GetAllAsync(dictionaryId);
+            return t.Select(t => new PairWordDto() {
+                Id=t.Id,
+                DictionaryId=t.DictionaryId,
+                Word=t.Word,
+                Translate=t.Translate});
         }
 
         public async Task<bool> DeleteAsync(long Id)

@@ -19,4 +19,7 @@
     <File Path="docker-compose-local.yml" />
     <File Path="docker-compose.yml" />
   </Folder>
+  <Folder Name="/_Additional/">
+    <Project Path="ConsoleHotkeyApp/ConsoleHotkeyApp.csproj" Id="9896041b-1a16-4317-8725-695cd6f170ef" />
+  </Folder>
 </Solution>
