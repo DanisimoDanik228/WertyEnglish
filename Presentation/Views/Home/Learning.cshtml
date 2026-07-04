@@ -1,4 +1,4 @@
-﻿@model long
+@model long
 
 <div class="bg-black text-light vh-100 d-flex flex-column justify-content-between p-3">
     <div>
@@ -66,6 +66,9 @@
         </button>
         <button title="Remove word totally" type="button" class="btn btn-outline-secondary" onclick="removeWord()">
             <i class="bi bi-trash fs-6"></i>
+        </button>
+        <button title="Shuffle and restart" type="button" class="btn btn-outline-secondary" onclick="shuffleAndRestart()">
+            <i class="bi bi-shuffle fs-6"></i>
         </button>
     </div>
 </div>
@@ -216,5 +219,31 @@
         allWords = await GetAllWords(dictionaryId);
         moveNext();
         renderCountWord();
+    }
+
+    function shuffleAndRestart()
+    {
+        if (allWords.length <= 1) {
+            indexWord = -1;
+            resultWork = [];
+            countKnown = 0;
+            countUnknown = 0;
+            isShowTranslate = false;
+            moveNext();
+            return;
+        }
+
+        for (let i = allWords.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+        }
+
+        indexWord = -1;
+        resultWork = [];
+        countKnown = 0;
+        countUnknown = 0;
+        isShowTranslate = false;
+        
+        moveNext();
     }
 </script>
