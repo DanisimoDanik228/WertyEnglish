@@ -1,4 +1,4 @@
-﻿@model long
+@model long
 
 <div class="bg-black container-fluid vh-100 text-light p-3">
     <div class="row h-100">
@@ -41,11 +41,12 @@
                 <div class="modal-body d-flex flex-column">
                     <input id="word" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
                     <input id="translate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                    <div id="addAlternatives" class="d-flex flex-wrap mt-2 justify-content-center"></div>
                 </div>
 
                 <div class="modal-footer">
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-outline-secondary" onclick="translateWord('word', 'translate')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('word', 'translate', 'addAlternatives')">Translate</button>
                     <button class="btn btn-outline-secondary" onclick="addWord()">Add Word</button>
                 </div>
 
@@ -64,11 +65,12 @@
                 <div class="modal-body d-flex flex-column">
                     <input id="updateWord" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
                     <input id="updateTranslate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                    <div id="updateAlternatives" class="d-flex flex-wrap mt-2 justify-content-center"></div>
                 </div>
 
                 <div class="modal-footer">
                     <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-outline-secondary" onclick="translateWord('updateWord', 'updateTranslate')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('updateWord', 'updateTranslate', 'updateAlternatives')">Translate</button>
                     <button class="btn btn-outline-secondary" onclick="updateWord()">Update Word</button>
                     <button class="btn btn-outline-secondary" onclick="deleteWord()">Delete Word</button>
                 </div>
@@ -96,6 +98,7 @@
 
             document.getElementById('updateWord').value = word.word;
             document.getElementById('updateTranslate').value = word.translate;
+            document.getElementById('updateAlternatives').innerHTML = "";
 
             const modalElement = document.getElementById('showInfoModal');
             const myModal = new bootstrap.Modal(modalElement);
@@ -171,15 +174,32 @@
         }
     }
 
-    async function translateWord(processWord, processTranslate)
+    async function translateWord(processWord, processTranslate, containerId)
     {
         const word = document.getElementById(processWord).value;
         if(word?.length == 0){
             return;
         }
 
-        const translate = await TranslateWord(word);
-        document.getElementById(processTranslate).value = translate;
+        const result = await GetTranslationAlternatives(word);
+        document.getElementById(processTranslate).value = result.translatedText;
+
+        if (containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            let allTranslate = [result.translatedText, ...result.alternatives]
+
+            .forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn btn-sm btn-outline-secondary m-1";
+                btn.type = "button";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    document.getElementById(processTranslate).value = opt;
+                };
+                container.appendChild(btn);
+            });
+        }
     }
 
     function closeModal(idModal)
