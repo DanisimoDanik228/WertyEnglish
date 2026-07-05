@@ -22,6 +22,11 @@ namespace WertyEnglish
 
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddAutoMapper(cfg =>
+            {
+                cfg.AddMaps(typeof(MappingProfile).Assembly);
+            });
+
             builder.Services.AddScoped<IPairWordRepository, PairWordRepository>();
             builder.Services.AddScoped<IDictionaryRepository, DictionaryRepository>();
 

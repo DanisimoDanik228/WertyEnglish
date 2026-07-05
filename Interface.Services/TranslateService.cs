@@ -1,4 +1,5 @@
-﻿using Application.Options;
+using Application.Dto;
+using Application.Options;
 using Application.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualBasic.FileIO;
@@ -26,6 +27,12 @@ namespace Infrastructure.Services
 
         public async Task<string> TranslateWord(string word)
         {
+            var result = await GetTranslationAlternativesAsync(word);
+            return result.TranslatedText;
+        }
+
+        public async Task<TranslationResultDto> GetTranslationAlternativesAsync(string word)
+        {
             var request = new TranslationRequest()
             { 
                 q = word,
@@ -38,7 +45,11 @@ namespace Infrastructure.Services
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<TranslationResponse>();
-            return result?.TranslatedText ?? "Error Translation";
+            return new TranslationResultDto
+            {
+                TranslatedText = result?.TranslatedText ?? "Error Translation",
+                Alternatives = result?.Alternatives ?? new List<string>()
+            };
         }
 
         public class TranslationResponse
@@ -53,7 +64,7 @@ namespace Infrastructure.Services
             public string source { get; set; }
             public string target { get; set; }
             public string format { get; set; } = "text";
-            public int alternatives { get; set; } = 3;
+            public int alternatives { get; set; } = 2;
             public string api_key { get; set; } = "";
         }
     }

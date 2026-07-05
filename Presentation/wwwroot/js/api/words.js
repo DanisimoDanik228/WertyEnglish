@@ -1,4 +1,4 @@
-﻿async function GetAllWords(dictionaryId) {
+async function GetAllWords(dictionaryId) {
     let response = await fetch(`/api/Word/GetAllWords?DitionaryId=${dictionaryId}`);
 
     return await response.json();
@@ -8,6 +8,12 @@ async function TranslateWord(word) {
     let response = await fetch(`/api/Word/TranslateWord?Word=${word}`);
 
     return await response.text();
+}
+
+async function GetTranslationAlternatives(word) {
+    let response = await fetch(`/api/Word/GetTranslationAlternatives?Word=${word}`);
+
+    return await response.json();
 }
 
 

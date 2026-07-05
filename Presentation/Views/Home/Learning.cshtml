@@ -1,4 +1,4 @@
-﻿@model long
+@model long
 
 <div class="bg-black text-light vh-100 d-flex flex-column justify-content-between p-3">
     <div>
@@ -67,11 +67,18 @@
         <button title="Remove word totally" type="button" class="btn btn-outline-secondary" onclick="removeWord()">
             <i class="bi bi-trash fs-6"></i>
         </button>
+        <button title="Shuffle and restart" type="button" class="btn btn-outline-secondary" onclick="shuffleAndRestart()">
+            <i class="bi bi-shuffle fs-6"></i>
+        </button>
+        <button title="Change language and restart" type="button" class="btn btn-outline-secondary" onclick="changeLanguageAndRestart()">
+            <i class="bi bi-translate fs-6"></i>
+        </button>
     </div>
 </div>
 
 <script>
     let isShowTranslate = false;
+    let languageTranslate = false;
     let allWords = [];
     let dictionaryId = @Model;
     let indexWord = -1;
@@ -79,22 +86,11 @@
     let resultWork = [];
     let countKnown = 0;
     let countUnknown = 0;
-    
-    const unknownWords = localStorage.getItem("unknownWords");
-    if(unknownWords)
-    {
-        allWords = JSON.parse(unknownWords).map(w => w.word);
-        moveNext();
-        renderCountWord();
-    }
-    else
-    {
-        loadWords();
-    }
+    loadWords();
 
     function makeKnown()
     {
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         countKnown++;
         resultWork.push({
             word: allWords[indexWord],
@@ -106,7 +102,7 @@
 
     function makeUnkown()
     {
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         countUnknown++;
         resultWork.push({
             word: allWords[indexWord],
@@ -118,7 +114,7 @@
 
     function movePrevious()
     {
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         if(indexWord <= 0){
             return;
         }
@@ -213,8 +209,58 @@
 
     async function loadWords()
     {
-        allWords = await GetAllWords(dictionaryId);
+        const unknownWords = localStorage.getItem("unknownWords");
+        if(unknownWords)
+        {
+            allWords = JSON.parse(unknownWords).map(w => w.word);
+        }
+        else
+        {
+            allWords = await GetAllWords(dictionaryId);
+        }
+
         moveNext();
         renderCountWord();
+    }
+
+    function shuffleAndRestart()
+    {
+        if (allWords.length <= 1) {
+            indexWord = -1;
+            resultWork = [];
+            countKnown = 0;
+            countUnknown = 0;
+            isShowTranslate = languageTranslate;
+            moveNext();
+            return;
+        }
+
+        for (let i = allWords.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allWords[i], allWords[j]] = [allWords[j], allWords[i]];
+        }
+
+        indexWord = -1;
+        resultWork = [];
+        countKnown = 0;
+        countUnknown = 0;
+        isShowTranslate = languageTranslate;
+        
+        moveNext();
+    }
+
+    async function changeLanguageAndRestart()
+    {
+        localStorage.removeItem("unknownWords");
+
+        indexWord = -1;
+        resultWork = [];
+        countKnown = 0;
+        countUnknown = 0;
+        languageTranslate = !languageTranslate;
+        isShowTranslate = languageTranslate;
+
+        allWords = await GetAllWords(dictionaryId);
+        moveNext();
     }
 </script>
