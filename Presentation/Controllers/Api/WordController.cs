@@ -34,6 +34,13 @@ namespace WertyEnglish.Controllers
             return Ok(translate);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetTranslationAlternatives(string Word)
+        {
+            var result = await _translateService.GetTranslationAlternativesAsync(Word);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreatePairWord(long DitionaryId, string Word, string Translate)
         {

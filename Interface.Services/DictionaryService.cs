@@ -1,4 +1,5 @@
-﻿using Application.Dto;
+using AutoMapper;
+using Application.Dto;
 using Application.Repositories;
 using Application.Services;
 using Domain.Models;
@@ -12,10 +13,14 @@ namespace Infrastructure.Services
     public class DictionaryService : IDictionaryService
     {
         private readonly IDictionaryRepository _repository;
+        private readonly IMapper _mapper;
 
-        public DictionaryService(IDictionaryRepository repository)
+        public DictionaryService(
+            IDictionaryRepository repository,
+            IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<DictionaryDto>> GetAllDictionariesAsync()
@@ -35,14 +40,7 @@ namespace Infrastructure.Services
                 Name = name
             });
             
-            var resDictionaryDto = new DictionaryDto
-            {
-                Id = res.Id,
-                Name = res.Name,
-                CountWord = 0
-            };
-
-            return resDictionaryDto;
+            return _mapper.Map<DictionaryDto>(res);
         }
 
         public async Task<bool> DeleteDictionaryAsync(long id)
