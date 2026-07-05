@@ -1,0 +1,12 @@
+﻿.hover-shadow:hover {
+    background-color: #535353;
+    transform: translateX(10px);
+}
+
+.hover-moved:hover {
+    transform: translateX(10px);
+}
+
+.shadow-light {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+}

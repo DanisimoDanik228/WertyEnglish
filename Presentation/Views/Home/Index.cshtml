@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "MainPage";
+}
+
+<div class="bg-black vw-100 min-vh-100 text-light p-3">
+    <div class="row">
+        <div class="col-sm-3">
+            <button type="button" class="btn btn-outline-secondary" onclick="openAddDictionaryModal()">
+                Add Dictionary
+            </button>
+        </div>
+
+        <div class="col-md-6">
+            <div id="container"></div>
+        </div>
+    </div>
+
+    <div class="modal modal-sm fade" id="addDictionaryModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+                <div class="modal-header">
+                    <h5>Add New Dictionary</h5>
+                </div>
+                <div class="modal-body d-flex flex-column">
+                    <input id="dictionaryName" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Name" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="addDictionary()">Add Dictionary</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let allDictionaries = [];
+    let selectedDictionaryId;
+    loadDictionaries();
+
+    async function loadDictionaries() {
+        allDictionaries = await GetAllDictionaries();
+        renderAllDictionaries(allDictionaries);
+    }
+
+    function openAddDictionaryModal() {
+        const modalElement = document.getElementById('addDictionaryModal');
+        const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        myModal.show();
+    }
+
+    async function addDictionary() {
+        const name = document.getElementById('dictionaryName').value;
+
+        if (!name || name.length === 0) {
+            return;
+        }
+
+        const newDictionary = await CreateDictionary(name);
+        allDictionaries.push(newDictionary);
+        renderAllDictionaries(allDictionaries);
+
+        closeModal('addDictionaryModal');
+    }
+
+    async function updateDictionary() {
+        if (!selectedDictionaryId) {
+            return;
+        }
+
+        const name = document.getElementById('updateDictionaryName').value;
+
+        if (!name || name.length === 0) {
+            return;
+        }
+
+        const updatedData = {
+            id: selectedDictionaryId,
+            name: name
+        };
+
+        const result = await UpdateDictionary(updatedData);
+        const index = allDictionaries.findIndex(d => d.id == result.id);
+
+        if (index !== -1) {
+            allDictionaries[index] = result;
+            renderAllDictionaries(allDictionaries);
+            closeModal('showInfoDictionaryModal');
+        }
+    }
+
+    async function deleteDictionary() {
+        if (!selectedDictionaryId) {
+            return;
+        }
+
+        const result = await DeleteDictionary(selectedDictionaryId);
+
+        if (result) {
+            const index = allDictionaries.findIndex(d => d.id == selectedDictionaryId);
+            if (index !== -1) {
+                allDictionaries.splice(index, 1);
+                renderAllDictionaries(allDictionaries);
+                closeModal('showInfoDictionaryModal');
+            }
+        }
+    }
+
+    function closeModal(idModal) {
+        const modalElement = document.getElementById(idModal);
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    function renderAllDictionaries(dictionaries) {
+        const container = document.getElementById('container');
+        container.innerHTML = "";
+
+            for (let dictionary of dictionaries) {
+            const a = document.createElement('a');
+
+            a.className = "m-1 hover-moved d-block text-white";
+            a.href = `/Home/Dictionary?id=${dictionary.id}`;
+            a.dataset.dictionaryId = dictionary.id;
+            a.innerText = `(${dictionary.countWord}) ${dictionary.name}`;
+
+            container.appendChild(a);
+        }
+    }
+</script>

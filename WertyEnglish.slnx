@@ -1,6 +1,25 @@
 <Solution>
-  <Project Path="docker-compose.dcproj">
-    <Build />
-  </Project>
-  <Project Path="WertyEnglish/WertyEnglish.csproj" />
+  <Folder Name="/Application/">
+    <Project Path="Application.Dto/Application.Dto.csproj" Id="3cb315b5-7e65-4659-8f95-e2b97a87eae5" />
+    <Project Path="Application.Options/Application.Options.csproj" Id="4f829d47-857f-4273-83da-b7afd4988554" />
+    <Project Path="Application.Repositories/Application.Repositories.csproj" />
+    <Project Path="Application.Services/Application.Services.csproj" Id="97c35153-0365-4e0d-a223-51a69bc94a2f" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="Domain.Models/Domain.Models.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure.Repositories/Infrastructure.Repositories.csproj" />
+    <Project Path="Interface.Services/Infrastructure.Services.csproj" Id="70749788-d1ac-479c-a285-3614525b6b12" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Presentation/Presentation.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="docker-compose-local.yml" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/_Additional/">
+    <Project Path="ConsoleHotkeyApp/ConsoleHotkeyApp.csproj" Id="9896041b-1a16-4317-8725-695cd6f170ef" />
+  </Folder>
 </Solution>

@@ -1,0 +1,273 @@
+@model long
+
+<div class="bg-black container-fluid vh-100 text-light p-3">
+    <div class="row h-100">
+        <div class="col-3 d-flex flex-column justify-content-between">
+            <div>  
+                <a href="/" class="btn btn-outline-secondary" title="Back Home">
+                    <i class="bi bi-house-door fs-5"></i>
+                </a>
+                <a href="/Home/Learning?Id=@Model" class="btn btn-outline-secondary" title="Learning">
+                    <i class="bi bi-book fs-5"></i>
+                </a>
+                <button type="button" class="btn btn-outline-secondary" title="Add Word" data-bs-toggle="modal" data-bs-target="#addWordModal">
+                    <i class="bi bi-plus-circle fs-5"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" title="Load File" onclick="loadFile()">
+                    <i class="bi bi-file-earmark-text fs-5"></i>
+                </button>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-outline-danger" title="Delete Dictionary" onclick="deleteDictionary()">
+                    <i class="bi bi-trash fs-5"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="col-9 h-100 overflow-y-auto">
+            <div id="container" onclick="chooseWord(event)"></div>
+        </div>
+    </div>
+
+    <div class="modal modal-sm fade" id="addWordModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+
+                <div class="modal-header">
+                    <h5>Add New Word</h5>
+                </div>
+
+                <div class="modal-body d-flex flex-column">
+                    <input id="word" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
+                    <input id="translate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                    <div id="addAlternatives" class="d-flex flex-wrap mt-2 justify-content-center"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('word', 'translate', 'addAlternatives')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="addWord()">Add Word</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-sm fade" id="showInfoModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-black border">
+
+                <div class="modal-header">
+                    <h5>Update New Word</h5>
+                </div>
+
+                <div class="modal-body d-flex flex-column">
+                    <input id="updateWord" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Word" />
+                    <input id="updateTranslate" class="bg-dark border border-2 border-black rounded-1 m-1 text-light" placeholder="Enter Translation" />
+                    <div id="updateAlternatives" class="d-flex flex-wrap mt-2 justify-content-center"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-outline-secondary" onclick="translateWord('updateWord', 'updateTranslate', 'updateAlternatives')">Translate</button>
+                    <button class="btn btn-outline-secondary" onclick="updateWord()">Update Word</button>
+                    <button class="btn btn-outline-secondary" onclick="deleteWord()">Delete Word</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    let allWords = [];
+    let selectedWordId;
+    let dictionaryId = @Model;
+    localStorage.removeItem("unknownWords");
+    loadWords();
+
+    function chooseWord(event) {
+        const targetDiv = event.target.closest('.hover-shadow');
+
+        if (targetDiv) {
+            selectedWordId = targetDiv.getAttribute('data-word-id');
+            const word = allWords.find(d => d.id == selectedWordId);
+
+            document.getElementById('updateWord').value = word.word;
+            document.getElementById('updateTranslate').value = word.translate;
+            document.getElementById('updateAlternatives').innerHTML = "";
+
+            const modalElement = document.getElementById('showInfoModal');
+            const myModal = new bootstrap.Modal(modalElement);
+            myModal.show();
+        }
+    }
+
+    async function addWord()
+    {
+        const word = document.getElementById('word').value;
+        const translate = document.getElementById('translate').value;
+
+        if(word?.length == 0 || translate?.length == 0){
+            return;
+        }
+
+        const newWord = await CreatePairWord(dictionaryId, word, translate);
+        allWords.push(newWord);
+        renderAllWords(allWords);
+
+        closeModal('addWordModal');
+    }
+
+    async function updateWord()
+    {
+        if(!selectedWordId)
+        {
+            return;
+        }
+
+        const word = document.getElementById('updateWord').value;
+        const translate = document.getElementById('updateTranslate').value;
+
+        if(word?.length == 0 || translate?.length == 0){
+            return;
+        }
+
+        const fullWord =
+        {
+            id:selectedWordId,
+            word:word,
+            translate:translate,
+            dictionaryId:dictionaryId
+        };
+        const newWord = await UpdatePairWord(fullWord);
+        const index = allWords.findIndex(w => w.id == newWord.id);
+        if (index !== -1) {
+            allWords[index] = newWord;
+            renderAllWords(allWords);
+
+            closeModal('showInfoModal');
+        }
+    }
+
+    async function deleteWord()
+    {
+        if(!selectedWordId)
+        {
+            return;
+        }
+
+        const result = await DeletePairWord(dictionaryId,selectedWordId);
+
+        if(result)
+        {
+            const index = allWords.findIndex(w => w.id == selectedWordId);
+            if (index !== -1) {
+                allWords.splice(index, 1);
+                renderAllWords(allWords);
+
+                closeModal('showInfoModal');
+            }
+        }
+    }
+
+    async function translateWord(processWord, processTranslate, containerId)
+    {
+        const word = document.getElementById(processWord).value;
+        if(word?.length == 0){
+            return;
+        }
+
+        const result = await GetTranslationAlternatives(word);
+        document.getElementById(processTranslate).value = result.translatedText;
+
+        if (containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            let allTranslate = [result.translatedText, ...result.alternatives]
+
+            .forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "btn btn-sm btn-outline-secondary m-1";
+                btn.type = "button";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    document.getElementById(processTranslate).value = opt;
+                };
+                container.appendChild(btn);
+            });
+        }
+    }
+
+    function closeModal(idModal)
+    {
+        const modalElement = document.getElementById(idModal);
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+    function renderAllWords(words)
+    {
+        const container = document.getElementById('container');
+        container.innerHTML = "";
+
+        for(let word of words){
+            const div = document.createElement('div');
+
+            div.className = "border rounded-2 m-1 hover-shadow";
+            div.dataset.wordId = word.id;
+
+            div.innerHTML = `
+                <div class="bg-dark rounded-2 m-1">${word.word}</div>
+                <div class="bg-dark rounded-2 m-1">${word.translate}</div>
+            `;
+
+            container.appendChild(div);
+        }
+    }
+
+    async function loadWords()
+    {
+        allWords = await GetAllWords(dictionaryId);
+        renderAllWords(allWords);
+    }
+
+    async function deleteDictionary()
+    {
+        await DeleteDictionary(dictionaryId);
+        window.location.href = "/";
+    }
+
+    async function loadFile()
+    {
+         const input = document.createElement('input');
+        input.type = 'file';
+
+        const file = await new Promise((resolve) => {
+            input.onchange = (e) => resolve(e.target.files[0]);
+            input.click();
+        });
+
+        if (!file) return;
+
+        const text = await file.text();
+        const words = text.split(/\r?\n/);
+
+        let newWords = [];
+        for(let word of words)
+        {
+            let translate = await TranslateWord(word);        
+            
+            const newWord = await CreatePairWord(dictionaryId, word, translate);
+            newWords.push(newWord);
+        }
+
+        allWords.push(...newWords);
+        renderAllWords(allWords);
+    }
+</script>
