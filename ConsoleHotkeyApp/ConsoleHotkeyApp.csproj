@@ -6,6 +6,7 @@
 	<UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>WertyEnglish.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>
