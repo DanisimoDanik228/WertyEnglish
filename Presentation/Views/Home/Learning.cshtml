@@ -70,11 +70,15 @@
         <button title="Shuffle and restart" type="button" class="btn btn-outline-secondary" onclick="shuffleAndRestart()">
             <i class="bi bi-shuffle fs-6"></i>
         </button>
+        <button title="Change language and restart" type="button" class="btn btn-outline-secondary" onclick="changeLanguageAndRestart()">
+            <i class="bi bi-translate fs-6"></i>
+        </button>
     </div>
 </div>
 
 <script>
     let isShowTranslate = false;
+    let languageTranslate = false;
     let allWords = [];
     let dictionaryId = @Model;
     let indexWord = -1;
@@ -82,22 +86,11 @@
     let resultWork = [];
     let countKnown = 0;
     let countUnknown = 0;
-    
-    const unknownWords = localStorage.getItem("unknownWords");
-    if(unknownWords)
-    {
-        allWords = JSON.parse(unknownWords).map(w => w.word);
-        moveNext();
-        renderCountWord();
-    }
-    else
-    {
-        loadWords();
-    }
+    loadWords();
 
     function makeKnown()
     {
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         countKnown++;
         resultWork.push({
             word: allWords[indexWord],
@@ -109,7 +102,7 @@
 
     function makeUnkown()
     {
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         countUnknown++;
         resultWork.push({
             word: allWords[indexWord],
@@ -121,7 +114,7 @@
 
     function movePrevious()
     {
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         if(indexWord <= 0){
             return;
         }
@@ -216,7 +209,16 @@
 
     async function loadWords()
     {
-        allWords = await GetAllWords(dictionaryId);
+        const unknownWords = localStorage.getItem("unknownWords");
+        if(unknownWords)
+        {
+            allWords = JSON.parse(unknownWords).map(w => w.word);
+        }
+        else
+        {
+            allWords = await GetAllWords(dictionaryId);
+        }
+
         moveNext();
         renderCountWord();
     }
@@ -228,7 +230,7 @@
             resultWork = [];
             countKnown = 0;
             countUnknown = 0;
-            isShowTranslate = false;
+            isShowTranslate = languageTranslate;
             moveNext();
             return;
         }
@@ -242,8 +244,23 @@
         resultWork = [];
         countKnown = 0;
         countUnknown = 0;
-        isShowTranslate = false;
+        isShowTranslate = languageTranslate;
         
+        moveNext();
+    }
+
+    async function changeLanguageAndRestart()
+    {
+        localStorage.removeItem("unknownWords");
+
+        indexWord = -1;
+        resultWork = [];
+        countKnown = 0;
+        countUnknown = 0;
+        languageTranslate = !languageTranslate;
+        isShowTranslate = languageTranslate;
+
+        allWords = await GetAllWords(dictionaryId);
         moveNext();
     }
 </script>
