@@ -3,11 +3,15 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 class BackgroundHandler
 {
-    private const int DoubleClickInterval = 500;
-    private static DateTime _lastClickTime = DateTime.MinValue;
+    private static Mutex? _mutex;
+
+    private const int DoubleClickInterval = 500; // Интервал 500мс
+    private static DateTime _lastCClickTime = DateTime.MinValue; // Время последнего нажатия Ctrl+C
     private static HttpClient client = new HttpClient();
     private const int defaultDictionaryId = 1;
 
@@ -15,6 +19,7 @@ class BackgroundHandler
     private const int WM_KEYDOWN = 0x0100;
     private const int VK_CONTROL = 0x11;
     private const int VK_C = 0x43;
+    private const int VK_D = 0x44;
 
     private static LowLevelKeyboardProc _proc = HookCallback;
     private static IntPtr _hookID = IntPtr.Zero;
@@ -22,13 +27,23 @@ class BackgroundHandler
     [STAThread]
     static void Main()
     {
+        bool createdNew;
+        _mutex = new Mutex(true, @"Global\BackgroundHandler", out createdNew);
+
+        if (!createdNew)
+        {
+            Console.WriteLine("Application is already running.");
+            return;
+        }
+
         _hookID = SetHook(_proc);
 
-        Console.WriteLine("Программа запущена. Нажмите Ctrl+C дважды для отправки в API.");
+        Console.WriteLine("Программа запущена. Нажмите CTRL+C, затем D (в течение 500мс) для отправки в API.");
 
         Application.Run();
 
         UnhookWindowsHookEx(_hookID);
+        GC.KeepAlive(_mutex);
     }
 
     private static IntPtr SetHook(LowLevelKeyboardProc proc)
@@ -47,24 +62,23 @@ class BackgroundHandler
         if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
         {
             int vkCode = Marshal.ReadInt32(lParam);
+            bool isCtrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
 
-            if (vkCode == VK_C)
+            if (isCtrlPressed)
             {
-                bool isCtrlPressed = (GetKeyState(VK_CONTROL) & 0x8000) != 0;
-
-                if (isCtrlPressed)
+                if (vkCode == VK_C)
+                {
+                    _lastCClickTime = DateTime.Now;
+                }
+                else if (vkCode == VK_D)
                 {
                     DateTime now = DateTime.Now;
-                    double elapsed = (now - _lastClickTime).TotalMilliseconds;
+                    double elapsed = (now - _lastCClickTime).TotalMilliseconds;
 
-                    if (elapsed < DoubleClickInterval)
+                    if (elapsed > 0 && elapsed < DoubleClickInterval)
                     {
-                        _lastClickTime = DateTime.MinValue;
+                        _lastCClickTime = DateTime.MinValue; // Сбрасываем время
                         HandleAction();
-                    }
-                    else
-                    {
-                        _lastClickTime = now;
                     }
                 }
             }
@@ -76,7 +90,7 @@ class BackgroundHandler
     {
         try
         {
-            await Task.Delay(150);
+            await Task.Delay(200);
 
             if (Clipboard.ContainsText())
             {
@@ -87,10 +101,13 @@ class BackgroundHandler
 
                 string word = Uri.EscapeDataString(text);
                 string translateUrl = $"https://english.werty.uk/api/Word/TranslateWord?Word={word}";
-                var translate = await client.GetStringAsync(translateUrl);
+
+                var translateRaw = await client.GetStringAsync(translateUrl);
+                string translate = translateRaw.Trim('"');
+
                 string url = $"https://english.werty.uk/api/Word/CreatePairWord?DitionaryId={defaultDictionaryId}&Word={word}&Translate={Uri.EscapeDataString(translate)}";
 
-                Console.WriteLine("Отправка: " + url + " / " + translate);
+                Console.WriteLine("Отправка: " + url);
 
                 var response = await client.PostAsync(url, null);
                 Console.WriteLine("Ответ сервера: " + response.StatusCode);
