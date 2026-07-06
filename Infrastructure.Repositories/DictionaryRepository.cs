@@ -57,5 +57,14 @@ namespace Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Dictionary> UpdateNameAsync(long Id, string Name)
+        {
+            var existDictionary = await _dbContext.Dictionaries.FindAsync(Id);
+            existDictionary.Name = Name;
+            await _dbContext.SaveChangesAsync();
+
+            return existDictionary;
+        }
     }
 }

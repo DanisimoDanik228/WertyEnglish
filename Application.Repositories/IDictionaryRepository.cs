@@ -15,6 +15,8 @@ namespace Application.Repositories
 
         Task<Dictionary> AddAsync(Dictionary dictionary);
 
+        Task<Dictionary> UpdateNameAsync(long Id, string Name);
+
         Task<bool> DeleteAsync(long id);
     }
 }

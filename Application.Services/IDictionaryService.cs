@@ -11,6 +11,7 @@ namespace Application.Services
         Task<IEnumerable<DictionaryDto>> GetAllDictionariesAsync();
         Task<Dictionary?> GetDictionaryByIdAsync(long id);
         Task<DictionaryDto> CreateDictionaryAsync(string name);
+        Task<bool> UpdateDictionaryAsync(long Id, string Name);
         Task<bool> DeleteDictionaryAsync(long id);
     }
 }

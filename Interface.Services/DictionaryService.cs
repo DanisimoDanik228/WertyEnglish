@@ -47,5 +47,12 @@ namespace Infrastructure.Services
         {
             return await _repository.DeleteAsync(id);
         }
+
+        public async Task<bool> UpdateDictionaryAsync(long Id, string Name)
+        {
+            var res = await _repository.UpdateNameAsync(Id, Name);
+            
+            return res.Name == Name;
+        }
     }
 }

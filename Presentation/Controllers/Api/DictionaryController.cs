@@ -31,6 +31,13 @@ namespace Presentation.Controllers.Api
             return Ok(word);
         }
 
+        [HttpPatch]
+        public async Task<IActionResult> UpdateDictionary(long Id, string Name)
+        {
+            var word = await _dictionaryService.UpdateDictionaryAsync(Id, Name);
+            return Ok(word);
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteDictionary(long Id)
         {

@@ -68,11 +68,9 @@ async function DeleteDictionary(id) {
     return await response.json();
 }
 
-async function UpdateDictionary(dictionary) {
-    let response = await fetch(`/api/Dictionary/UpdateDictionary`, {
-        method: "PATCH",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dictionary)
+async function UpdateDictionary(Id, Name) {
+    let response = await fetch(`/api/Dictionary/UpdateDictionary?Id=${Id}&Name=${Name}`, {
+        method: "PATCH"
     });
     return await response.json();
 }
